@@ -1,0 +1,24 @@
+{
+  "id": 10,
+  "name": "Trận cuối",
+  "startingSun": 200,
+  "availablePlants": ["peashooter", "sunflower", "wallnut", "icepea"],
+  "skySuns": true,
+  "waves": [
+    { "time": 20, "zombie": "walker", "row": 2 },
+    { "time": 32, "zombie": "walker", "row": 1 },
+    { "time": 45, "zombie": "cone", "row": 3 },
+    { "time": 65, "zombie": "cone", "row": 2 },
+    { "time": 85, "zombie": "bucket", "row": 1 },
+    { "time": 108, "zombie": "cone", "row": 3 },
+    { "time": 122, "zombie": "walker", "row": 0 },
+    { "time": 134, "zombie": "walker", "row": 4 },
+    { "time": 150, "zombie": "bucket", "row": 2 },
+    { "time": 165, "zombie": "cone", "row": 1 },
+    { "time": 195, "zombie": "bucket", "row": 2, "hugeWave": true },
+    { "time": 196, "zombie": "cone", "row": 1 },
+    { "time": 197, "zombie": "cone", "row": 3 },
+    { "time": 198, "zombie": "walker", "row": 0 },
+    { "time": 199, "zombie": "walker", "row": 1 }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": 5,
+  "name": "Zombie nón",
+  "startingSun": 125,
+  "availablePlants": ["peashooter", "sunflower", "wallnut"],
+  "skySuns": true,
+  "waves": [
+    { "time": 20, "zombie": "walker", "row": 2 },
+    { "time": 38, "zombie": "walker", "row": 1 },
+    { "time": 52, "zombie": "cone", "row": 3 },
+    { "time": 66, "zombie": "walker", "row": 2 },
+    { "time": 78, "zombie": "cone", "row": 1 },
+    { "time": 90, "zombie": "walker", "row": 3 },
+    { "time": 100, "zombie": "cone", "row": 2 },
+    { "time": 110, "zombie": "walker", "row": 1 },
+    { "time": 116, "zombie": "walker", "row": 2 }
+  ]
+}

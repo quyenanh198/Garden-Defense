@@ -1,0 +1,21 @@
+{
+  "id": 6,
+  "name": "Dồn dập",
+  "startingSun": 175,
+  "availablePlants": ["peashooter", "sunflower", "wallnut"],
+  "skySuns": true,
+  "waves": [
+    { "time": 20, "zombie": "walker", "row": 2 },
+    { "time": 35, "zombie": "walker", "row": 1 },
+    { "time": 50, "zombie": "walker", "row": 3 },
+    { "time": 70, "zombie": "walker", "row": 0 },
+    { "time": 85, "zombie": "walker", "row": 4 },
+    { "time": 95, "zombie": "cone", "row": 2 },
+    { "time": 105, "zombie": "cone", "row": 1 },
+    { "time": 130, "zombie": "walker", "row": 1, "hugeWave": true },
+    { "time": 130, "zombie": "cone", "row": 2 },
+    { "time": 130, "zombie": "walker", "row": 3 },
+    { "time": 132, "zombie": "walker", "row": 2 },
+    { "time": 133, "zombie": "walker", "row": 1 }
+  ]
+}

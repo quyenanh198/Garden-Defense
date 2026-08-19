@@ -81,11 +81,20 @@ class PlantCard extends StatelessWidget {
                       ),
                     ),
                     if (!affordable)
-                      Text(
-                        'thiếu sun',
-                        style: GdText.body.copyWith(
-                          fontSize: 10,
-                          color: GdColors.danger,
+                      // 1 dòng co giãn theo bề ngang thẻ — để chữ tự xuống
+                      // dòng sẽ làm Column cao quá 88px của thẻ.
+                      SizedBox(
+                        width: 56,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            'thiếu sun',
+                            maxLines: 1,
+                            style: GdText.body.copyWith(
+                              fontSize: 10,
+                              color: GdColors.danger,
+                            ),
+                          ),
                         ),
                       ),
                   ],

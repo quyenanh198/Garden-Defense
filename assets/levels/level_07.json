@@ -1,0 +1,19 @@
+{
+  "id": 7,
+  "name": "Đậu băng",
+  "startingSun": 150,
+  "availablePlants": ["peashooter", "sunflower", "wallnut", "icepea"],
+  "skySuns": true,
+  "waves": [
+    { "time": 20, "zombie": "walker", "row": 2 },
+    { "time": 35, "zombie": "walker", "row": 1 },
+    { "time": 50, "zombie": "cone", "row": 3 },
+    { "time": 70, "zombie": "cone", "row": 2 },
+    { "time": 90, "zombie": "cone", "row": 1 },
+    { "time": 105, "zombie": "walker", "row": 3 },
+    { "time": 115, "zombie": "cone", "row": 2 },
+    { "time": 130, "zombie": "cone", "row": 2, "hugeWave": true },
+    { "time": 131, "zombie": "walker", "row": 1 },
+    { "time": 131, "zombie": "walker", "row": 3 }
+  ]
+}

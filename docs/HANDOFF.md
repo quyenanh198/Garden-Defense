@@ -19,9 +19,15 @@ Review effort cao ra 7 finding, **đã fix hết** (test-first; test trong `test
 6. ✅ **Cột spawn zombie hardcode `9.0`** — `lib/core/entities.dart`: default `Balance.cols * 1.0`.
 7. ✅ **Thanh máu wallnut gate bằng heuristic `hp >= 1000`** — `PlantView.showsHpBar` (hiện khi `plant.hp < plant.spec.hp`), mọi cây hiện thanh khi mất máu.
 
-Sau fix: `flutter analyze` sạch · `flutter test` 46 pass (35 cũ + 11 mới).
+Sau toàn bộ session: `flutter analyze` sạch · `flutter test` 61 pass.
 
-**Finding mới phát hiện khi viết test (chưa fix):** `PlantCard` (72×88, `lib/ui/hud/plant_card.dart:59`) overflow ~13px khi hiện dòng "thiếu sun" (icon 40 + gap 4 + giá 16px + dòng 10px vượt chiều cao) — thấy qua font metric của flutter_test; trên máy thật cần verify, fix gợi ý: `FittedBox`/giảm gap hoặc `mainAxisSize.min`.
+**PlantCard overflow (finding phát sinh) — đã fix:** dòng "thiếu sun" giờ là 1 dòng trong `FittedBox` co giãn (`lib/ui/hud/plant_card.dart`), có widget test tái hiện (`test/ui/plant_card_test.dart`).
+
+## M6 (phần level): 10 file level + test mô phỏng
+- `assets/levels/level_02.json` … `level_10.json` theo đúng bảng độ khó trong `docs/GAME_DESIGN.md` (L2 sunflower, L3 wallnut, L4 ba hàng, L5 cone, L6 huge wave, L7 icepea, L8 sun 25, L9 bucket, L10 boss ~200s).
+- `test/data/levels_m6_test.dart`: bot chơi tổng quát (thu sun, phủ cây bắn theo hàng bị đe dọa, tường cột 5 cho zombie trâu, tăng cường theo áp lực HP, sunflower khi rảnh — kèm cờ `log:` để tune level sau này). Test khẳng định: **cả 10 level bot thắng**; **level 8–10 đánh bại kịch bản "rảnh tay" 1 hàng** (proxy cho "không thắng rảnh tay" của ROADMAP).
+- Bài học cân bằng khi tune: thu nhập ≈ 5 sun/s (sky 2.5 + 2–3 sunflower) → mỗi lần mở hàng mới (100 sun) cần cách nhau ~15–20s; cone = tường (50) + 1 cây bắn; bucket = tường + 2 cây bắn.
+- **Chưa xong M6**: verify tay trên thiết bị ("mỗi level thắng được nhưng không thắng rảnh tay") — sim chỉ là proxy; và phần asset CC0 (sprite/font) vẫn chờ.
 
 Đã kiểm và cố ý không flag: mutation map cooldown khi lặp (an toàn — chỉ update key có sẵn), tap priority của sun (đúng), clamp nhịp bắn, vòng đời overlay pause/retry, số liệu balance khớp `docs/GAME_DESIGN.md`.
 
@@ -47,11 +53,10 @@ flutter test
 - Plugin `ecc`, `multi-ai-skills`, `superpowers` (+ `ui-ux-pro-max`, `obsidian`, v.v.) **đã enable ở tài khoản** nhưng skill chỉ nạp lúc tạo session → `/caveman:full` không chạy được trong session này. Session mới sẽ có sẵn; session này dùng `/code-review` built-in thay thế.
 
 ## Việc kế tiếp
-1. Fix nhỏ: `PlantCard` overflow khi hiện "thiếu sun" (xem finding mới ở trên).
-2. M6: 10 file level theo bảng độ khó trong `docs/GAME_DESIGN.md` (level 2–10), chơi thử từng level; chỉ thêm JSON.
-3. M6: sprite CC0 theo `docs/ASSETS.md` + font OFL; cập nhật `manifest.json`, `CREDITS.md`, bỏ comment `fonts:` trong pubspec.
-4. M7: `MenuScreen` đầy đủ + `LevelSelectScreen` + `ProgressStore` (shared_preferences), âm thanh (`flame_audio`), hiệu ứng, build APK.
-5. Cải tiến nhỏ từ verify M5: icon thẻ plant đang là ô màu (thay bằng sprite khi có); zombie spawn ở col 9 ngoài lưới (ổn, có thể thêm nền "đường vào").
+1. M6: chơi tay level 2–10 trên thiết bị để verify độ khó thật (sim đã chứng minh thắng được; cảm giác "suýt thua" ở 8–10 cần người thật).
+2. M6: sprite CC0 theo `docs/ASSETS.md` + font OFL; cập nhật `manifest.json`, `CREDITS.md`, bỏ comment `fonts:` trong pubspec.
+3. M7: `MenuScreen` đầy đủ + `LevelSelectScreen` + `ProgressStore` (shared_preferences), âm thanh (`flame_audio`), hiệu ứng, build APK.
+4. Cải tiến nhỏ từ verify M5: icon thẻ plant đang là ô màu (thay bằng sprite khi có); zombie spawn ở col 9 ngoài lưới (ổn, có thể thêm nền "đường vào").
 
 ## Chờ người dùng
 - Cài Android SDK command-line tools → `flutter doctor` xanh Android → `flutter build apk --release`.

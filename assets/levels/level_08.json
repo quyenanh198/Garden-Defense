@@ -1,0 +1,21 @@
+{
+  "id": 8,
+  "name": "Khan hiếm",
+  "startingSun": 25,
+  "availablePlants": ["peashooter", "sunflower", "wallnut", "icepea"],
+  "skySuns": true,
+  "waves": [
+    { "time": 40, "zombie": "walker", "row": 2 },
+    { "time": 60, "zombie": "walker", "row": 1 },
+    { "time": 75, "zombie": "walker", "row": 3 },
+    { "time": 95, "zombie": "cone", "row": 2 },
+    { "time": 110, "zombie": "walker", "row": 0 },
+    { "time": 125, "zombie": "walker", "row": 4 },
+    { "time": 140, "zombie": "cone", "row": 1 },
+    { "time": 150, "zombie": "walker", "row": 2 },
+    { "time": 155, "zombie": "cone", "row": 3 },
+    { "time": 170, "zombie": "cone", "row": 2, "hugeWave": true },
+    { "time": 171, "zombie": "walker", "row": 1 },
+    { "time": 171, "zombie": "walker", "row": 3 }
+  ]
+}
