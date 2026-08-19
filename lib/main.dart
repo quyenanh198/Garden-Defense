@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-void main() {
+import 'ui/game_screen.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]);
   runApp(const GardenDefenseApp());
 }
 
@@ -11,7 +19,8 @@ class GardenDefenseApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'Garden Defense',
-      home: Scaffold(body: Center(child: Text('Garden Defense'))),
+      debugShowCheckedModeBanner: false,
+      home: GameScreen(),
     );
   }
 }
