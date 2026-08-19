@@ -10,13 +10,13 @@ import '../grid_board.dart';
 import '../sprite_registry.dart';
 
 class SunView extends PositionComponent with TapCallbacks {
-  SunView(this.sun, SpriteRegistry sprites, this.onCollect)
+  SunView(this.sun, SpriteRegistry sprites, this.onCollect, GridBoard board)
       : super(size: Vector2.all(64), anchor: Anchor.center) {
     final s = sprites.sprite('sun');
     if (s != null) add(SpriteComponent(sprite: s, size: size));
     _hasSprite = s != null;
     priority = 100; // trên mọi thứ để bắt tap trước lưới
-    _target = GridBoard.cellToPixel(sun.row, sun.col);
+    _target = board.cellToPixel(sun.row, sun.col);
     position = Vector2(_target.x, GridBoard.originY - 40);
   }
 

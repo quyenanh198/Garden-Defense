@@ -1,0 +1,19 @@
+{
+  "id": 3,
+  "name": "Tường chắn",
+  "startingSun": 100,
+  "availablePlants": ["peashooter", "sunflower", "wallnut"],
+  "skySuns": true,
+  "waves": [
+    { "time": 20, "zombie": "walker", "row": 2 },
+    { "time": 26, "zombie": "walker", "row": 2 },
+    { "time": 45, "zombie": "walker", "row": 0 },
+    { "time": 60, "zombie": "walker", "row": 4 },
+    { "time": 70, "zombie": "walker", "row": 0 },
+    { "time": 85, "zombie": "walker", "row": 2 },
+    { "time": 90, "zombie": "walker", "row": 2 },
+    { "time": 105, "zombie": "walker", "row": 4 },
+    { "time": 112, "zombie": "walker", "row": 0 },
+    { "time": 115, "zombie": "walker", "row": 2 }
+  ]
+}

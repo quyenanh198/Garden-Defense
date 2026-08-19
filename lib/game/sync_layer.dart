@@ -24,28 +24,28 @@ class SyncLayer {
       game.state.plants,
       _plants,
       (p) => p.id,
-      create: (p) => PlantView(p, game.sprites),
+      create: (p) => PlantView(p, game.sprites, game.board),
       update: (v) {},
     );
     _syncList<Zombie, ZombieView>(
       game.state.zombies,
       _zombies,
       (z) => z.id,
-      create: (z) => ZombieView(z, game.sprites),
+      create: (z) => ZombieView(z, game.sprites, game.board),
       update: (v) => v.syncFromState(),
     );
     _syncList<Projectile, ProjectileView>(
       game.state.projectiles,
       _projectiles,
       (p) => p.id,
-      create: (p) => ProjectileView(p, game.sprites),
+      create: (p) => ProjectileView(p, game.sprites, game.board),
       update: (v) => v.syncFromState(),
     );
     _syncList<SunDrop, SunView>(
       game.state.suns,
       _suns,
       (s) => s.id,
-      create: (s) => SunView(s, game.sprites, game.state.collectSun),
+      create: (s) => SunView(s, game.sprites, game.state.collectSun, game.board),
       update: (v) => v.syncFromState(),
     );
   }

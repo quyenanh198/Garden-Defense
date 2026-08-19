@@ -10,10 +10,14 @@ class ResultOverlay extends StatelessWidget {
     required this.phase,
     required this.onRetry,
     required this.onContinue,
+    this.endlessWave,
   });
   final GamePhase phase;
   final VoidCallback onRetry;
   final VoidCallback onContinue;
+
+  /// Số đợt sống sót ở Endless; null = campaign.
+  final int? endlessWave;
 
   @override
   Widget build(BuildContext context) {
@@ -42,11 +46,22 @@ class ResultOverlay extends StatelessWidget {
                 color: won ? GdColors.primaryDark : GdColors.danger,
               ),
             ),
+            if (endlessWave != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Sống sót $endlessWave đợt',
+                style: GdText.body.copyWith(fontSize: 22),
+              ),
+            ],
             const SizedBox(height: 20),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 ClayButton(label: 'Chơi lại', onTap: onRetry),
+                if (endlessWave != null) ...[
+                  const SizedBox(width: 16),
+                  ClayButton(label: 'Về menu', onTap: onContinue),
+                ],
                 if (won) ...[
                   const SizedBox(width: 16),
                   ClayButton(

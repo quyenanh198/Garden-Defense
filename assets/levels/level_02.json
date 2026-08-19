@@ -1,0 +1,16 @@
+{
+  "id": 2,
+  "name": "Kinh tế nắng",
+  "startingSun": 100,
+  "availablePlants": ["peashooter", "sunflower"],
+  "skySuns": true,
+  "waves": [
+    { "time": 20, "zombie": "walker", "row": 1 },
+    { "time": 45, "zombie": "walker", "row": 3 },
+    { "time": 70, "zombie": "walker", "row": 1 },
+    { "time": 85, "zombie": "walker", "row": 3 },
+    { "time": 100, "zombie": "walker", "row": 1 },
+    { "time": 110, "zombie": "walker", "row": 3 },
+    { "time": 112, "zombie": "walker", "row": 1 }
+  ]
+}

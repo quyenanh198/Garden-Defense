@@ -20,6 +20,9 @@ class Plant {
   final int col;
   double hp;
   double actionTimer; // đếm tới lần hành động kế
+  bool upgraded = false; // Endless: nâng cấp 1 lần, hiệu lực ×2
+
+  double get maxHp => spec.hp * (upgraded ? Balance.upgradeFactor : 1);
 }
 
 class Zombie {
@@ -27,7 +30,7 @@ class Zombie {
     required this.id,
     required this.spec,
     required this.row,
-    this.col = 9.0,
+    this.col = Balance.cols * 1.0, // mép phải lưới
   }) : hp = spec.hp;
   final int id;
   final ZombieSpec spec;

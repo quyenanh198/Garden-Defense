@@ -2,6 +2,7 @@ import 'dart:math';
 
 import '../config/balance.dart';
 import '../data/level_data.dart';
+import 'endless_spawner.dart';
 import 'entities.dart';
 import 'game_event.dart';
 import 'wave_spawner.dart';
@@ -9,19 +10,45 @@ import 'wave_spawner.dart';
 enum GamePhase { playing, paused, won, lost }
 
 /// Toàn bộ luật chơi. Thuần Dart, deterministic theo dt và seed.
+/// Lưới mặc định 5×9 (campaign); Endless truyền rows/cols riêng.
 class GameState {
-  GameState({required this.level, Random? random})
-      : _random = random ?? Random(),
-        _spawner = WaveSpawner(level.waves),
+  GameState({
+    required this.level,
+    Random? random,
+    this.rows = Balance.rows,
+    this.cols = Balance.cols,
+    this.endless = false,
+  })  : _random = random ?? Random(),
         sun = level.startingSun {
+    _spawner =
+        endless ? EndlessSpawner(rows: rows, random: _random) : WaveSpawner(level.waves);
     for (final id in level.availablePlants) {
       _cooldowns[id] = 0;
     }
   }
 
+  /// Cấu hình kinh tế cho chế độ Endless (waves sinh động, không từ JSON).
+  static LevelData endlessConfig() => LevelData(
+        id: 0,
+        name: 'Endless',
+        startingSun: Balance.endlessStartingSun,
+        availablePlants: Balance.plants.keys.toList(),
+        skySuns: true,
+        waves: const [],
+      );
+
   final LevelData level;
   final Random _random;
-  final WaveSpawner _spawner;
+  final int rows;
+  final int cols;
+  final bool endless;
+  late final Spawner _spawner;
+
+  /// Số đợt Endless đã sinh (0 ở campaign).
+  int get endlessWave {
+    final s = _spawner;
+    return s is EndlessSpawner ? s.wave : 0;
+  }
 
   int sun;
   double elapsed = 0;
@@ -64,7 +91,10 @@ class GameState {
 
   PlantResult _tryPlant(int row, int col) {
     final id = selectedPlantId;
-    if (id == null) return PlantResult.noSelection;
+    if (id == null) {
+      // Endless: tap cây đã trồng khi không chọn thẻ = nâng cấp.
+      return endless ? _tryUpgrade(row, col) : PlantResult.noSelection;
+    }
     if (!level.availablePlants.contains(id)) return PlantResult.notAvailable;
     final spec = Balance.plants[id]!;
     if (plants.any((p) => p.row == row && p.col == col)) {
@@ -78,6 +108,25 @@ class GameState {
     _cooldowns[id] = spec.plantCooldown;
     selectedPlantId = null;
     _events.add(PlantPlaced(plant.id, row, col));
+    return PlantResult.ok;
+  }
+
+  PlantResult _tryUpgrade(int row, int col) {
+    Plant? target;
+    for (final p in plants) {
+      if (p.row == row && p.col == col) {
+        target = p;
+        break;
+      }
+    }
+    if (target == null) return PlantResult.noSelection;
+    if (target.upgraded) return PlantResult.alreadyUpgraded;
+    final cost = target.spec.cost * Balance.upgradeFactor;
+    if (sun < cost) return PlantResult.notEnoughSun;
+    sun -= cost;
+    target.upgraded = true;
+    target.hp += target.spec.hp; // +HP gốc cho mọi cây (docs/GAME_DESIGN.md)
+    _events.add(PlantUpgraded(target.id));
     return PlantResult.ok;
   }
 
@@ -123,6 +172,7 @@ class GameState {
         id: _nextId++,
         spec: Balance.zombies[w.zombie]!,
         row: w.row,
+        col: cols.toDouble(),
       );
       zombies.add(z);
       _events.add(ZombieSpawned(z.id));
@@ -138,7 +188,11 @@ class GameState {
           p.actionTimer += dt;
           if (p.actionTimer >= Balance.sunflowerInterval) {
             p.actionTimer -= Balance.sunflowerInterval;
-            _spawnSun(p.row, p.col.toDouble(), Balance.sunflowerValue);
+            _spawnSun(
+              p.row,
+              p.col.toDouble(),
+              Balance.sunflowerValue * (p.upgraded ? Balance.upgradeFactor : 1),
+            );
           }
         case PlantAction.shoot:
         case PlantAction.shootIce:
@@ -160,7 +214,8 @@ class GameState {
                 id: _nextId++,
                 row: p.row,
                 col: p.col + 0.4,
-                damage: Balance.peaDamage,
+                damage: Balance.peaDamage *
+                    (p.upgraded ? Balance.upgradeFactor : 1),
                 slows: p.spec.action == PlantAction.shootIce,
               ),
             );
@@ -172,15 +227,15 @@ class GameState {
   void _moveProjectiles(double dt) {
     final dead = <Projectile>[];
     for (final pr in projectiles) {
+      // Quét cả đoạn đường đi trong frame: dt lớn (máy giật) không được
+      // làm đạn nhảy qua zombie mà không trúng.
+      final from = pr.col;
       pr.col += Balance.peaSpeed * dt;
-      if (pr.col > Balance.cols + 0.5) {
-        dead.add(pr);
-        continue;
-      }
       Zombie? hit;
       for (final z in zombies) {
         if (!z.isAlive || z.row != pr.row) continue;
-        if ((z.col - pr.col).abs() < Balance.projectileHitRadius) {
+        if (z.col >= from - Balance.projectileHitRadius &&
+            z.col <= pr.col + Balance.projectileHitRadius) {
           if (hit == null || z.col < hit.col) hit = z;
         }
       }
@@ -193,6 +248,8 @@ class GameState {
           hit.state = ZombieState.dying;
           _events.add(ZombieDied(hit.id));
         }
+      } else if (pr.col > cols + 0.5) {
+        dead.add(pr);
       }
     }
     projectiles.removeWhere(dead.contains);
@@ -216,7 +273,10 @@ class GameState {
             z.col -= speed * dt;
           } else {
             z.state = ZombieState.eating;
-            target.hp -= Balance.zombieBiteDps * dt;
+            // Bị làm chậm thì ăn cũng chậm (docs/GAME_DESIGN.md: chậm 50%).
+            target.hp -= Balance.zombieBiteDps *
+                (z.isSlowed ? Balance.iceSlowFactor : 1) *
+                dt;
             if (target.hp <= 0) {
               plants.remove(target);
               _events.add(PlantDied(target.id));
@@ -241,8 +301,8 @@ class GameState {
     if (_skySunTimer >= Balance.skySunInterval) {
       _skySunTimer -= Balance.skySunInterval;
       _spawnSun(
-        _random.nextInt(Balance.rows),
-        _random.nextInt(Balance.cols).toDouble(),
+        _random.nextInt(rows),
+        _random.nextInt(cols).toDouble(),
         Balance.skySunValue,
       );
     }

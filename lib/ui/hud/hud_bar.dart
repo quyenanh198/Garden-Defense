@@ -52,6 +52,10 @@ class _HudBarState extends State<HudBar> {
           child: Row(
             children: [
               _SunWallet(sun: state.sun, flashing: flashing),
+              if (state.endless) ...[
+                const SizedBox(width: 12),
+                _WaveChip(wave: state.endlessWave),
+              ],
               const SizedBox(width: 16),
               Expanded(
                 child: SingleChildScrollView(
@@ -118,6 +122,29 @@ class _SunWallet extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _WaveChip extends StatelessWidget {
+  const _WaveChip({required this.wave});
+  final int wave;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: GdColors.hudChip,
+        borderRadius: BorderRadius.circular(GdShape.radius),
+      ),
+      child: Semantics(
+        label: 'Đợt: $wave',
+        child: Text(
+          'Đợt $wave',
+          style: GdText.heading.copyWith(fontSize: 24, color: Colors.white),
+        ),
       ),
     );
   }

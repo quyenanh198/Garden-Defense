@@ -1,0 +1,19 @@
+{
+  "id": 9,
+  "name": "Xô sắt",
+  "startingSun": 175,
+  "availablePlants": ["peashooter", "sunflower", "wallnut", "icepea"],
+  "skySuns": true,
+  "waves": [
+    { "time": 20, "zombie": "walker", "row": 2 },
+    { "time": 40, "zombie": "cone", "row": 1 },
+    { "time": 55, "zombie": "walker", "row": 3 },
+    { "time": 75, "zombie": "bucket", "row": 2 },
+    { "time": 95, "zombie": "walker", "row": 1 },
+    { "time": 110, "zombie": "bucket", "row": 3 },
+    { "time": 125, "zombie": "cone", "row": 2 },
+    { "time": 150, "zombie": "bucket", "row": 2, "hugeWave": true },
+    { "time": 151, "zombie": "cone", "row": 1 },
+    { "time": 152, "zombie": "walker", "row": 3 }
+  ]
+}

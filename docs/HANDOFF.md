@@ -1,12 +1,44 @@
 # Session handoff — Garden Defense
 
-Cập nhật: 2026-08-19 — sau M5 (vertical slice hoàn tất)
+Cập nhật: 2026-08-19 — sau session code review toàn bộ `lib/` (không đổi code)
 
 ## Trạng thái
 - Milestone xong: **M1–M5** theo `docs/ROADMAP.md`. Verify tay trên Windows desktop bằng screenshot tự động: lưới + tap, zombie đi/ăn/thua, đạn + trừ máu đúng hàng, sun rơi/thu, HUD thẻ plant (chọn / thiếu sun / cooldown), pause, chơi trọn level 1 → banner "Đợt tấn công lớn!" ở ~107 s → Thắng → "Tiếp tục" về menu.
 - `flutter analyze`: sạch · `flutter test`: 35 pass (balance, level parser/validator, core M2–M5).
-- Nhánh: `feat/m1-m5-vertical-slice` → merge vào `main`.
+- Nhánh: `main` là mới nhất. Session này chạy trên `claude/caveman-code-review-2gxbxp` (ngang `main`, chỉ thêm handoff này).
 - Asset: chưa có sprite/font (placeholder vẽ bằng code). Hướng dẫn: `docs/ASSETS.md`, `assets/fonts/README.md`.
+
+## Kết quả session này: code review `lib/` (~1.900 dòng) + fix cả 7 finding
+Review effort cao ra 7 finding, **đã fix hết** (test-first; test trong `test/core/game_state_review_test.dart`, `test/data/level_data_test.dart`, `test/ui/menu_screen_test.dart`, `test/ui/huge_wave_banner_test.dart`, `test/game/plant_view_test.dart`).
+
+1. ✅ **Đạn xuyên qua zombie khi lag** — `lib/core/game_state.dart` `_moveProjectiles`: chuyển sang va chạm quét (swept) cả đoạn đường đạn đi trong frame, dt lớn không còn nhảy qua zombie; vẫn trúng zombie gần nhất trên đường bay.
+2. ✅ **JSON level sai kiểu crash bằng cast error** — `lib/data/level_data.dart`: đọc field qua `_read<T>` có kiểm tra kiểu, thiếu/sai kiểu ném `LevelFormatException` nêu tên field (vd `waves[0].row: expected int, got String`); JSON hỏng / top-level không phải object cũng thành `LevelFormatException`.
+3. ✅ **Double-tap "Chơi level 1" push 2 GameScreen** — `lib/ui/menu_screen.dart`: chuyển sang StatefulWidget với guard `_launching`.
+4. ✅ **Ice slow giờ giảm cả bite DPS** (quyết định: docs thắng, giống PvZ gốc) — `lib/core/game_state.dart`: zombie bị chậm cắn `zombieBiteDps * iceSlowFactor`; wallnut sau icepea trụ 80 s thay vì 40 s.
+5. ✅ **Banner huge wave thứ 2 bị nuốt** — `GardenGame.hugeWaveSeq` tăng mỗi cảnh báo; overlay remove+add và `HugeWaveBanner` nhận `ValueKey(hugeWaveSeq)` nên banner mới thay banner cũ với timer 3s chạy lại.
+6. ✅ **Cột spawn zombie hardcode `9.0`** — `lib/core/entities.dart`: default `Balance.cols * 1.0`.
+7. ✅ **Thanh máu wallnut gate bằng heuristic `hp >= 1000`** — `PlantView.showsHpBar` (hiện khi `plant.hp < plant.spec.hp`), mọi cây hiện thanh khi mất máu.
+
+## M8: Chế độ Endless + upgrade (theo yêu cầu, kéo lên trước M6-asset/M7)
+Spec đầy đủ trong `docs/GAME_DESIGN.md` (mục "Chế độ Endless"), tiêu chí trong `docs/ROADMAP.md` M8. Quyết định của người dùng: làm ngay; Endless có mặt cả 2 nền tảng (desktop 10×20, Android 5×9); upgrade 1 cấp giá 2×, hiệu lực ×2.
+- **Lưới tham số hóa**: `GameState(rows, cols)` (mặc định 5×9), `GridBoard` chuyển từ hằng static sang instance — views nhận `board` qua constructor. Campaign không đổi hành vi (toàn bộ test cũ pass nguyên trạng).
+- **`EndlessSpawner`** (`lib/core/endless_spawner.dart`) implements interface `Spawner` chung với `WaveSpawner`: nhịp 18s co 0.25s/đợt sàn 6s, cỡ đợt 1+đợt÷5 (trần 2×hàng), huge mỗi 10 đợt có banner, mix walker/cone(30%, từ đợt 3)/bucket(20%, từ đợt 8), deterministic theo seed. `allSpawned=false` → không bao giờ thắng.
+- **Upgrade (chỉ Endless)**: tap cây khi không chọn thẻ → trừ 2× giá, `upgraded=true` 1 lần duy nhất; damage đạn ×2, sun sinh ×2, +HP gốc mọi cây; event `PlantUpgraded`, `PlantResult.alreadyUpgraded`; PlantView vẽ viền vàng, thanh máu theo `maxHp`.
+- **UI**: nút "Endless" ở menu (chọn lưới theo `defaultTargetPlatform`), HUD chip "Đợt N", màn thua hiện "Sống sót N đợt" + nút "Về menu".
+- Test: `test/core/endless_test.dart` (spawner deterministic/leo thang/huge/warning/sàn nhịp; spawn mép phải lưới 20 cột; sun trời trong biên; upgrade đủ nhánh; campaign không có upgrade) + widget test nút Endless.
+- **Chưa verify tay trên desktop thật** (lưới 10×20 nhìn ổn không, cân bằng Endless) — cần `flutter run -d windows`.
+
+Sau toàn bộ session: `flutter analyze` sạch · `flutter test` 73 pass.
+
+**PlantCard overflow (finding phát sinh) — đã fix:** dòng "thiếu sun" giờ là 1 dòng trong `FittedBox` co giãn (`lib/ui/hud/plant_card.dart`), có widget test tái hiện (`test/ui/plant_card_test.dart`).
+
+## M6 (phần level): 10 file level + test mô phỏng
+- `assets/levels/level_02.json` … `level_10.json` theo đúng bảng độ khó trong `docs/GAME_DESIGN.md` (L2 sunflower, L3 wallnut, L4 ba hàng, L5 cone, L6 huge wave, L7 icepea, L8 sun 25, L9 bucket, L10 boss ~200s).
+- `test/data/levels_m6_test.dart`: bot chơi tổng quát (thu sun, phủ cây bắn theo hàng bị đe dọa, tường cột 5 cho zombie trâu, tăng cường theo áp lực HP, sunflower khi rảnh — kèm cờ `log:` để tune level sau này). Test khẳng định: **cả 10 level bot thắng**; **level 8–10 đánh bại kịch bản "rảnh tay" 1 hàng** (proxy cho "không thắng rảnh tay" của ROADMAP).
+- Bài học cân bằng khi tune: thu nhập ≈ 5 sun/s (sky 2.5 + 2–3 sunflower) → mỗi lần mở hàng mới (100 sun) cần cách nhau ~15–20s; cone = tường (50) + 1 cây bắn; bucket = tường + 2 cây bắn.
+- **Chưa xong M6**: verify tay trên thiết bị ("mỗi level thắng được nhưng không thắng rảnh tay") — sim chỉ là proxy; và phần asset CC0 (sprite/font) vẫn chờ.
+
+Đã kiểm và cố ý không flag: mutation map cooldown khi lặp (an toàn — chỉ update key có sẵn), tap priority của sun (đúng), clamp nhịp bắn, vòng đời overlay pause/retry, số liệu balance khớp `docs/GAME_DESIGN.md`.
 
 ## Chạy
 ```
@@ -18,21 +50,25 @@ flutter test
 - Lỗi `LNK1168 cannot open ... garden_defense.exe`: app còn chạy → `taskkill /F /IM garden_defense.exe`.
 - Lỗi `flutter test` "failed to delete build\unit_test_assets" (sau khi build windows): PowerShell `Remove-Item build\unit_test_assets -Recurse -Force` rồi chạy lại.
 
-## Quyết định mới (đã phản ánh vào docs)
+## Quyết định trước đó (đã phản ánh vào docs)
 - Sim core thuần Dart (`lib/core/`) + Flame chỉ render (`lib/game/`) + Flutter overlay (`lib/ui/`) — `docs/ARCHITECTURE.md`, spec `docs/superpowers/specs/2026-08-19-garden-defense-m1-m5-design.md`.
 - Flame ghim `^1.35.1` (Flutter 3.32.1 / Dart 3.8.1). Nâng Flutter ≥ 3.41 để dùng ^1.38.
 - Cây bắn (peashooter/icepea) bắn ngay phát đầu khi có mục tiêu (actionTimer khởi tạo = fireInterval).
 - Thẻ plant vẫn được chọn sau khi tap ô bị từ chối (giống PvZ); bỏ chọn sau khi trồng thành công.
-- Sau code review: engine Flame `pauseEngine()` khi tạm dừng; `tapCell/collectSun` bị chặn khi không `playing` (`PlantResult.notPlaying`); cây bắn nạp đạn cả khi không có mục tiêu (nhịp ≥ 1.4 s kể cả mục tiêu vào/ra tầm). Chưa làm: dispose `ValueNotifier` trong `GardenGame` (dispose trước khi HudBar gỡ listener sẽ assert; để GC).
+- Engine Flame `pauseEngine()` khi tạm dừng; `tapCell/collectSun` bị chặn khi không `playing`; cây bắn nạp đạn cả khi không có mục tiêu (nhịp ≥ 1.4 s). Chưa làm: dispose `ValueNotifier` trong `GardenGame` (để GC).
 - Plan đã thực thi: `docs/superpowers/plans/2026-08-19-garden-defense-m1-m5.md`.
 
-## Việc kế tiếp (M6–M7, cần spec/plan riêng)
-1. M6: 10 file level theo bảng độ khó trong `docs/GAME_DESIGN.md` (level 2–10), chơi thử từng level; chỉ thêm JSON.
+## Ghi chú môi trường session
+- Plugin `ecc`, `multi-ai-skills`, `superpowers` (+ `ui-ux-pro-max`, `obsidian`, v.v.) **đã enable ở tài khoản** nhưng skill chỉ nạp lúc tạo session → `/caveman:full` không chạy được trong session này. Session mới sẽ có sẵn; session này dùng `/code-review` built-in thay thế.
+
+## Việc kế tiếp
+0. M8: verify tay Endless trên desktop (`flutter run -d windows`): lưới 10×20 hiển thị, upgrade bằng tap, chip Đợt, màn thua; tune cân bằng Endless nếu cần (số liệu trong `balance.dart` + `GAME_DESIGN.md`).
+1. M6: chơi tay level 2–10 trên thiết bị để verify độ khó thật (sim đã chứng minh thắng được; cảm giác "suýt thua" ở 8–10 cần người thật).
 2. M6: sprite CC0 theo `docs/ASSETS.md` + font OFL; cập nhật `manifest.json`, `CREDITS.md`, bỏ comment `fonts:` trong pubspec.
 3. M7: `MenuScreen` đầy đủ + `LevelSelectScreen` + `ProgressStore` (shared_preferences), âm thanh (`flame_audio`), hiệu ứng, build APK.
-4. Cải tiến nhỏ đã thấy khi verify: icon thẻ plant đang là ô màu (thay bằng sprite khi có); zombie spawn ở col 9 nằm ngoài lưới (ổn, nhưng có thể thêm nền "đường vào").
+4. Cải tiến nhỏ từ verify M5: icon thẻ plant đang là ô màu (thay bằng sprite khi có); zombie spawn ở col 9 ngoài lưới (ổn, có thể thêm nền "đường vào").
 
 ## Chờ người dùng
-- Cài Android SDK command-line tools → `flutter doctor` xanh Android → `flutter build apk --release` (verify M5/M7 trên máy thật).
+- Cài Android SDK command-line tools → `flutter doctor` xanh Android → `flutter build apk --release`.
 - Tải sprite CC0 + font theo hướng dẫn trên.
-- GitHub: đã push `main` + `feat/m1-m5-vertical-slice` lên https://github.com/quyenanh198/Garden-Defense (remote `origin`).
+- GitHub: `main` đã trên https://github.com/quyenanh198/Garden-Defense (remote `origin`); handoff này trên nhánh `claude/caveman-code-review-2gxbxp`.

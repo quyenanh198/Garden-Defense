@@ -40,8 +40,18 @@ class LevelData {
   final List<WaveEntry> waves;
 
   /// Parse + validate. Ném [LevelFormatException] nếu sai schema.
-  static LevelData parse(String jsonText) =>
-      fromJson(jsonDecode(jsonText) as Map<String, dynamic>);
+  static LevelData parse(String jsonText) {
+    final Object? decoded;
+    try {
+      decoded = jsonDecode(jsonText);
+    } on FormatException catch (e) {
+      throw LevelFormatException(['invalid JSON: ${e.message}']);
+    }
+    if (decoded is! Map<String, dynamic>) {
+      throw LevelFormatException(['top-level JSON must be an object']);
+    }
+    return fromJson(decoded);
+  }
 
   static LevelData fromJson(Map<String, dynamic> json) {
     final level = fromJsonUnchecked(json);
@@ -50,28 +60,59 @@ class LevelData {
     return level;
   }
 
-  /// Chỉ đọc field, không kiểm tra luật — dùng cho validator test.
+  /// Chỉ đọc field (kiểm tra kiểu, không kiểm tra luật) — dùng cho
+  /// validator test. Ném [LevelFormatException] nếu field thiếu/sai kiểu.
   static LevelData fromJsonUnchecked(Map<String, dynamic> json) {
-    final waves = (json['waves'] as List<dynamic>? ?? const [])
-        .map((w) => w as Map<String, dynamic>)
-        .map(
-          (w) => WaveEntry(
-            time: (w['time'] as num).toDouble(),
-            zombie: w['zombie'] as String,
-            row: w['row'] as int,
-            hugeWave: w['hugeWave'] as bool? ?? false,
-          ),
-        )
-        .toList();
+    final rawWaves = _read<List<dynamic>>(json, 'waves', orElse: const []);
+    final waves = <WaveEntry>[];
+    for (var i = 0; i < rawWaves.length; i++) {
+      final w = rawWaves[i];
+      if (w is! Map<String, dynamic>) {
+        throw LevelFormatException(['waves[$i]: expected object']);
+      }
+      waves.add(
+        WaveEntry(
+          time: _read<num>(w, 'time', ctx: 'waves[$i]').toDouble(),
+          zombie: _read<String>(w, 'zombie', ctx: 'waves[$i]'),
+          row: _read<int>(w, 'row', ctx: 'waves[$i]'),
+          hugeWave: _read<bool>(w, 'hugeWave', ctx: 'waves[$i]', orElse: false),
+        ),
+      );
+    }
+    final rawPlants = _read<List<dynamic>>(json, 'availablePlants');
+    final plants = <String>[];
+    for (var i = 0; i < rawPlants.length; i++) {
+      final p = rawPlants[i];
+      if (p is! String) {
+        throw LevelFormatException(['availablePlants[$i]: expected String']);
+      }
+      plants.add(p);
+    }
     return LevelData(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      startingSun: json['startingSun'] as int,
-      availablePlants:
-          (json['availablePlants'] as List<dynamic>).cast<String>(),
-      skySuns: json['skySuns'] as bool? ?? true,
+      id: _read<int>(json, 'id'),
+      name: _read<String>(json, 'name'),
+      startingSun: _read<int>(json, 'startingSun'),
+      availablePlants: plants,
+      skySuns: _read<bool>(json, 'skySuns', orElse: true),
       waves: waves,
     );
+  }
+
+  static T _read<T>(
+    Map<String, dynamic> json,
+    String key, {
+    String? ctx,
+    T? orElse,
+  }) {
+    final v = json[key];
+    if (v is T) return v;
+    if (v == null && orElse != null) return orElse;
+    final where = ctx == null ? key : '$ctx.$key';
+    throw LevelFormatException([
+      v == null
+          ? '$where: missing required field ($T)'
+          : '$where: expected $T, got ${v.runtimeType}',
+    ]);
   }
 }
 
