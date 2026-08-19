@@ -1,4 +1,44 @@
 {
-  "_comment": "id -> {file, frameSize:[w,h]?, frames?, stepTime?}. Thieu id hoac file => placeholder.",
-  "sprites": {}
+  "_comment": "id -> {file, frameSize:[w,h]?, frames?, stepTime?}. Thieu id hoac file => placeholder. Xem docs/ASSETS.md.",
+  "sprites": {
+    "sunflower": {
+      "file": "sunflower.png"
+    },
+    "peashooter": {
+      "file": "peashooter.png"
+    },
+    "wallnut": {
+      "file": "wallnut.png"
+    },
+    "icepea": {
+      "file": "icepea.png"
+    },
+    "walker": {
+      "file": "walker.png"
+    },
+    "walker_walk": {
+      "file": "walker_walk.png",
+      "frameSize": [
+        96,
+        128
+      ],
+      "frames": 6,
+      "stepTime": 0.12
+    },
+    "cone": {
+      "file": "cone.png"
+    },
+    "bucket": {
+      "file": "bucket.png"
+    },
+    "pea": {
+      "file": "pea.png"
+    },
+    "icepea_shot": {
+      "file": "icepea_shot.png"
+    },
+    "sun": {
+      "file": "sun.png"
+    }
+  }
 }
