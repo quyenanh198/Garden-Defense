@@ -28,6 +28,14 @@
 └─────────────────────────────────────────┘
 ```
 
+## Sim core tách khỏi Flame (quyết định 2026-08-19)
+
+`lib/core/` chứa toàn bộ luật chơi (`GameState.tick(dt)`, entity, `WaveSpawner`) bằng Dart thuần — không import Flame/Flutter, không có pixel. `lib/game/` là lớp view: `GardenGame` gọi `state.tick(dt)` mỗi frame rồi `SyncLayer` đối chiếu entity trong state với component Flame (thêm/cập nhật/xóa). Input Flame chuyển thành lệnh `state.selectPlant / tapCell / collectSun`. Nhờ vậy tiêu chí ROADMAP kiểm tra được bằng `flutter test` mà không cần Flame.
+
+Camera: `CameraComponent.withFixedResolution(1280, 720)`; lưới chiếm `x 200–1240`, `y 100–700`; HUD (Flutter overlay) phủ dải `y 0–100`. Sprite tra qua `assets/images/manifest.json`; thiếu file → placeholder, không crash.
+
+Chi tiết: `docs/superpowers/specs/2026-08-19-garden-defense-m1-m5-design.md`.
+
 ## Hệ tọa độ lưới (xương sống)
 
 - Lưới **5 hàng × 9 cột**. `GridBoard` là nơi duy nhất biết kích thước ô theo pixel.
@@ -62,21 +70,33 @@ lib/
 ├── config/
 │   └── balance.dart       # MỌI số liệu cân bằng (mirror GAME_DESIGN.md)
 ├── data/
-│   ├── level_data.dart    # model + parser JSON level
-│   └── progress_store.dart
-├── game/
-│   ├── garden_game.dart   # FlameGame chính
-│   ├── grid_board.dart
-│   ├── wave_spawner.dart
+│   ├── level_data.dart    # model + parser + validator JSON level (không Flutter)
+│   ├── level_loader.dart  # đọc assets/levels qua rootBundle
+│   └── progress_store.dart  # (M7)
+├── core/                  # SIM CORE — thuần Dart, không Flame/Flutter, không pixel
+│   ├── game_state.dart    # GameState.tick(dt), lệnh từ UI, thắng/thua
+│   ├── entities.dart      # Plant, Zombie, Projectile, SunDrop
+│   ├── game_event.dart    # sealed GameEvent, PlantResult
+│   └── wave_spawner.dart
+├── game/                  # VIEW — Flame
+│   ├── garden_game.dart   # FlameGame: tick state, sync, notifier cho HUD
+│   ├── grid_board.dart    # duy nhất biết cellToPixel / pixelToCell, nhận tap
+│   ├── sync_layer.dart    # đối chiếu state ↔ component
+│   ├── sprite_registry.dart  # manifest.json → Sprite/Animation hoặc null
 │   └── components/
-│       ├── plant.dart     # base + các loại plant
-│       ├── zombie.dart    # base + các loại zombie
-│       ├── projectile.dart
-│       └── sun.dart
-└── ui/
+│       ├── plant_view.dart
+│       ├── zombie_view.dart
+│       ├── projectile_view.dart
+│       ├── sun_view.dart
+│       └── placeholder.dart
+└── ui/                    # Flutter widget overlay
+    ├── theme.dart         # design system (màu, font, bo góc)
     ├── menu_screen.dart
-    ├── level_select_screen.dart
-    └── hud/               # thanh chọn plant, đếm sun, pause
+    ├── level_select_screen.dart  # (M7)
+    ├── game_screen.dart   # GameWidget + overlayBuilderMap
+    ├── widgets/clay_button.dart
+    ├── hud/               # hud_bar.dart, plant_card.dart
+    └── overlays/          # result, pause, huge_wave_banner
 ```
 
 ## Quyết định & đánh đổi
@@ -86,4 +106,5 @@ lib/
 | Va chạm theo hàng, không dùng collision engine tổng quát | PvZ chỉ cần va chạm 1 chiều trong hàng — đơn giản, nhanh, dễ debug | Nếu sau này có plant/đạn xuyên hàng chéo thì phải mở rộng |
 | Level bằng JSON tĩnh trong assets | Thêm level không cần code, dễ test cân bằng | Không có level editor trực quan (chấp nhận ở quy mô cá nhân) |
 | UI bằng Flutter widget overlay | Đúng sở trường Flutter sẵn có, nhanh hơn vẽ UI trong Flame | Hai hệ tọa độ UI/game phải giao tiếp qua GardenGame |
+| Sim core thuần Dart, Flame chỉ render | test logic không cần Flame; pixel chỉ ở tầng render | thêm một lớp sync state↔component |
 | shared_preferences cho tiến độ | Chỉ cần lưu "đã qua level nào" — key-value là đủ | Nếu sau này có meta-progression phức tạp thì chuyển sang file JSON riêng |
