@@ -1,34 +1,42 @@
 # Session handoff — Garden Defense
 
-Cập nhật: 2026-08-19 — sau M4
+Cập nhật: 2026-08-19 — sau M5 (vertical slice hoàn tất)
 
 ## Trạng thái
-- Milestone xong: M1–M4 — verify trên Windows desktop bằng screenshot (grid, zombie đi/ăn, thua, đạn, sun rơi/thu, HUD thẻ plant + cooldown + thiếu sun, pause).
-- Đang dở: M5 (LevelLoader + menu, test M5, HugeWaveBanner, vòng thắng/thua đầy đủ).
-- `flutter analyze`: sạch · `flutter test`: 29 pass.
-- Lưu ý Windows: sau `flutter build windows`, thư mục `build/unit_test_assets` bị read-only làm `flutter test` lỗi "failed to delete" — xóa thư mục đó (PowerShell `Remove-Item -Recurse -Force`) rồi chạy lại.
-- Asset: chưa có sprite; `assets/images/manifest.json` đã khai báo ID, thiếu file → placeholder. Nguồn gợi ý: `docs/ASSETS.md`.
-- Nhánh: `feat/m1-m5-vertical-slice` (merge vào `main` khi xong M5).
+- Milestone xong: **M1–M5** theo `docs/ROADMAP.md`. Verify tay trên Windows desktop bằng screenshot tự động: lưới + tap, zombie đi/ăn/thua, đạn + trừ máu đúng hàng, sun rơi/thu, HUD thẻ plant (chọn / thiếu sun / cooldown), pause, chơi trọn level 1 → banner "Đợt tấn công lớn!" ở ~107 s → Thắng → "Tiếp tục" về menu.
+- `flutter analyze`: sạch · `flutter test`: 33 pass (balance, level parser/validator, core M2–M5).
+- Nhánh: `feat/m1-m5-vertical-slice` → merge vào `main`.
+- Asset: chưa có sprite/font (placeholder vẽ bằng code). Hướng dẫn: `docs/ASSETS.md`, `assets/fonts/README.md`.
 
 ## Chạy
 ```
 flutter pub get
 flutter run -d windows
+flutter test
 ```
-Build debug exe: `flutter build windows --debug` → `build/windows/x64/runner/Debug/garden_defense.exe`.
-Lưu ý: nếu build báo `LNK1168 cannot open ... garden_defense.exe` thì app còn đang chạy — `taskkill /F /IM garden_defense.exe`.
+- Build debug exe: `flutter build windows --debug` → `build/windows/x64/runner/Debug/garden_defense.exe`.
+- Lỗi `LNK1168 cannot open ... garden_defense.exe`: app còn chạy → `taskkill /F /IM garden_defense.exe`.
+- Lỗi `flutter test` "failed to delete build\unit_test_assets" (sau khi build windows): PowerShell `Remove-Item build\unit_test_assets -Recurse -Force` rồi chạy lại.
 
-## Quyết định mới (chưa vào docs khác)
-- Flame ghim `^1.35.1` (Flutter 3.32.1 / Dart 3.8.1 không resolve ^1.37).
-- Dev target Windows; APK verify để sau khi cài Android SDK.
-- Plan chi tiết: `docs/superpowers/plans/2026-08-19-garden-defense-m1-m5.md`; spec: `docs/superpowers/specs/2026-08-19-garden-defense-m1-m5-design.md`.
+## Quyết định mới (đã phản ánh vào docs)
+- Sim core thuần Dart (`lib/core/`) + Flame chỉ render (`lib/game/`) + Flutter overlay (`lib/ui/`) — `docs/ARCHITECTURE.md`, spec `docs/superpowers/specs/2026-08-19-garden-defense-m1-m5-design.md`.
+- Flame ghim `^1.35.1` (Flutter 3.32.1 / Dart 3.8.1). Nâng Flutter ≥ 3.41 để dùng ^1.38.
+- Cây bắn (peashooter/icepea) bắn ngay phát đầu khi có mục tiêu (actionTimer khởi tạo = fireInterval).
+- Thẻ plant vẫn được chọn sau khi tap ô bị từ chối (giống PvZ); bỏ chọn sau khi trồng thành công.
+- Plan đã thực thi: `docs/superpowers/plans/2026-08-19-garden-defense-m1-m5.md`.
 
-## Việc kế tiếp
-1. Task 12: `lib/data/level_loader.dart`, `lib/ui/menu_screen.dart`, main → MenuScreen.
-2. Task 13: `test/core/game_state_m5_test.dart`.
-3. Task 14: HugeWaveBanner + Tiếp tục về menu. Task 15: review + push.
+## Việc kế tiếp (M6–M7, cần spec/plan riêng)
+1. M6: 10 file level theo bảng độ khó trong `docs/GAME_DESIGN.md` (level 2–10), chơi thử từng level; chỉ thêm JSON.
+2. M6: sprite CC0 theo `docs/ASSETS.md` + font OFL; cập nhật `manifest.json`, `CREDITS.md`, bỏ comment `fonts:` trong pubspec.
+3. M7: `MenuScreen` đầy đủ + `LevelSelectScreen` + `ProgressStore` (shared_preferences), âm thanh (`flame_audio`), hiệu ứng, build APK.
+4. Cải tiến nhỏ đã thấy khi verify: icon thẻ plant đang là ô màu (thay bằng sprite khi có); zombie spawn ở col 9 nằm ngoài lưới (ổn, nhưng có thể thêm nền "đường vào").
 
 ## Chờ người dùng
-- Cài Android SDK command-line tools để build APK.
-- Tải sprite CC0 theo `docs/ASSETS.md` (sẽ có ở Task 7), font theo `assets/fonts/README.md` (Task 11).
-- Tạo repo GitHub `quyenanh198/garden-defense` (trống) rồi: `git remote add origin https://github.com/quyenanh198/garden-defense.git && git push -u origin main`.
+- Cài Android SDK command-line tools → `flutter doctor` xanh Android → `flutter build apk --release` (verify M5/M7 trên máy thật).
+- Tải sprite CC0 + font theo hướng dẫn trên.
+- GitHub: máy không có `gh`, Claude không tạo repo được. Tạo repo trống `quyenanh198/garden-defense` trên GitHub rồi chạy:
+  ```
+  git remote add origin https://github.com/quyenanh198/garden-defense.git
+  git push -u origin main
+  ```
+  (nếu remote đã được thêm sẵn thì chỉ cần `git push -u origin main`).
