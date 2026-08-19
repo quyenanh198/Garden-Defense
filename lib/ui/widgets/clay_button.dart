@@ -31,9 +31,9 @@ class ClayButton extends StatelessWidget {
               width: GdShape.border,
             ),
           ),
-          alignment: Alignment.center,
           child: Text(
             label,
+            textAlign: TextAlign.center,
             style: GdText.body.copyWith(
               fontSize: 18,
               fontWeight: FontWeight.w700,

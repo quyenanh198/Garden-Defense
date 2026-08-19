@@ -1,0 +1,58 @@
+import 'dart:math';
+import 'dart:ui';
+
+import 'package:flame/components.dart';
+import 'package:flame/events.dart';
+
+import '../../config/balance.dart';
+import '../../core/entities.dart';
+import '../grid_board.dart';
+import '../sprite_registry.dart';
+
+class SunView extends PositionComponent with TapCallbacks {
+  SunView(this.sun, SpriteRegistry sprites, this.onCollect)
+      : super(size: Vector2.all(64), anchor: Anchor.center) {
+    final s = sprites.sprite('sun');
+    if (s != null) add(SpriteComponent(sprite: s, size: size));
+    _hasSprite = s != null;
+    priority = 100; // trên mọi thứ để bắt tap trước lưới
+    _target = GridBoard.cellToPixel(sun.row, sun.col);
+    position = Vector2(_target.x, GridBoard.originY - 40);
+  }
+
+  final SunDrop sun;
+  final void Function(int sunId) onCollect;
+  late final Vector2 _target;
+  late final bool _hasSprite;
+  final _fill = Paint()..color = const Color(0xFFFBBF24);
+  final _ring = Paint()
+    ..color = const Color(0xFFF59E0B)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 4;
+
+  void syncFromState() {
+    final t = (sun.age / 1.0).clamp(0.0, 1.0);
+    position = Vector2(
+      _target.x,
+      lerpDouble(GridBoard.originY - 40, _target.y, t)!,
+    );
+    final left = Balance.sunLifetime - sun.age;
+    if (left < 2) {
+      final blink = (sin(left * 12) + 1) / 2;
+      _fill.color = const Color(
+        0xFFFBBF24,
+      ).withValues(alpha: 0.4 + 0.6 * blink);
+    }
+  }
+
+  @override
+  void render(Canvas canvas) {
+    if (_hasSprite) return;
+    final c = Offset(size.x / 2, size.y / 2);
+    canvas.drawCircle(c, size.x / 2 - 4, _fill);
+    canvas.drawCircle(c, size.x / 2 - 4, _ring);
+  }
+
+  @override
+  void onTapDown(TapDownEvent event) => onCollect(sun.id);
+}
