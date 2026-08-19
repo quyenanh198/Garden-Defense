@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../data/level_data.dart';
 import '../game/garden_game.dart';
 import 'hud/hud_bar.dart';
+import 'overlays/huge_wave_banner.dart';
 import 'overlays/pause_overlay.dart';
 import 'overlays/result_overlay.dart';
 
@@ -41,7 +42,7 @@ class _GameScreenState extends State<GameScreen> {
     game.state.resume();
   }
 
-  void _quit() => Navigator.of(context).maybePop();
+  void _quit() => Navigator.of(context).popUntil((r) => r.isFirst);
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +56,8 @@ class _GameScreenState extends State<GameScreen> {
           'hud': (context, g) => _HudOverlay(game: g, onPause: _pause),
           'pause': (context, g) =>
               PauseOverlay(onResume: _resume, onRetry: _retry, onQuit: _quit),
+          'hugeWave': (context, g) =>
+              HugeWaveBanner(onDone: () => g.overlays.remove('hugeWave')),
           'result': (context, g) => ResultOverlay(
                 phase: g.state.phase,
                 onRetry: _retry,
