@@ -35,7 +35,9 @@ Spec đầy đủ trong `docs/GAME_DESIGN.md` (mục "Chế độ Endless"), ti�
 - **M7 âm thanh**: dep `flame_audio ^2.11.0` (ROADMAP chỉ định); 7 file WAV **sinh gốc** (`assets/audio/`): plant/hit/sun/upgrade/huge/win/lose; helper `Sfx.play` nuốt lỗi khi thiếu plugin nên widget test không vỡ. Hiệu ứng chết/trúng đạn đã có sẵn từ M5 (hitFlash + thu nhỏ khi chết) — đạt mức "tối thiểu" của ROADMAP.
 - Test mới: progress_store (3), menu/level-select/double-tap viết lại theo luồng mới, callback endless-thua.
 
-Sau toàn bộ session: `flutter analyze` sạch · `flutter test` 78 pass.
+- **Animation đi bộ**: 3 sheet vẽ gốc `walker/cone/bucket_walk.png` (6 frame 96×128, chân so le + bàn chân + tay vung + thân nhún), manifest đã khai báo — `ZombieView` tự ưu tiên anim, không sửa Dart. `test/game/sprite_registry_test.dart` load manifest + asset THẬT (không mock) xác nhận đủ 10 sprite + 3 animation. `docs/ASSETS.md` bổ sung bảng nguồn miễn phí đã tra cứu (OpenGameArt CC0, Kenney, CraftPix — kèm cảnh báo license và ghi chú các trang này bị proxy remote chặn, tải trên máy dev).
+
+Sau toàn bộ session: `flutter analyze` sạch · `flutter test` 79 pass.
 
 **PlantCard overflow (finding phát sinh) — đã fix:** dòng "thiếu sun" giờ là 1 dòng trong `FittedBox` co giãn (`lib/ui/hud/plant_card.dart`), có widget test tái hiện (`test/ui/plant_card_test.dart`).
 
