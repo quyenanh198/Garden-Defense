@@ -8,7 +8,7 @@ import '../config/balance.dart';
 /// Nơi duy nhất biết kích thước ô theo pixel (không gian ảo 1280×720).
 class GridBoard extends PositionComponent with TapCallbacks {
   GridBoard()
-    : super(position: Vector2(originX, originY), size: Vector2(gridW, gridH));
+      : super(position: Vector2(originX, originY), size: Vector2(gridW, gridH));
 
   static const double originX = 200;
   static const double originY = 100;
