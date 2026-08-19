@@ -9,9 +9,9 @@ import '../sprite_registry.dart';
 import 'placeholder.dart';
 
 class ZombieView extends PositionComponent {
-  ZombieView(this.zombie, SpriteRegistry sprites)
+  ZombieView(this.zombie, SpriteRegistry sprites, this.board)
       : super(
-          size: Vector2(GridBoard.cellW * 0.7, GridBoard.cellH * 0.95),
+          size: Vector2(board.cellW * 0.7, board.cellH * 0.95),
           anchor: Anchor.bottomCenter,
         ) {
     final anim = sprites.animation('${zombie.spec.id}_walk');
@@ -31,6 +31,7 @@ class ZombieView extends PositionComponent {
   }
 
   final Zombie zombie;
+  final GridBoard board;
   PlaceholderPainter? _placeholder;
   double _flash = 0;
   final _hpBg = Paint()..color = const Color(0xFF7F1D1D);
@@ -41,11 +42,11 @@ class ZombieView extends PositionComponent {
   void hitFlash() => _flash = 0.12;
 
   void syncFromState() {
-    final center = GridBoard.cellToPixel(zombie.row, zombie.col);
+    final center = board.cellToPixel(zombie.row, zombie.col);
     // lệch phải 1/4 ô để khi ăn, zombie đứng sát mép phải plant thay vì đè lên
     position = Vector2(
-      center.x + GridBoard.cellW * 0.25,
-      center.y + GridBoard.cellH * 0.45,
+      center.x + board.cellW * 0.25,
+      center.y + board.cellH * 0.45,
     );
     if (zombie.state == ZombieState.dying) {
       final t = (zombie.dyingRemaining / Balance.zombieDyingDuration).clamp(

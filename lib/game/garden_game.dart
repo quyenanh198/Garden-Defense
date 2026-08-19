@@ -5,6 +5,7 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 
+import '../config/balance.dart';
 import '../core/game_event.dart';
 import '../core/game_state.dart';
 import '../data/level_data.dart';
@@ -13,8 +14,19 @@ import 'sprite_registry.dart';
 import 'sync_layer.dart';
 
 class GardenGame extends FlameGame {
-  GardenGame({required LevelData level, Random? random})
-      : state = GameState(level: level, random: random),
+  GardenGame({
+    required LevelData level,
+    Random? random,
+    int rows = Balance.rows,
+    int cols = Balance.cols,
+    bool endless = false,
+  })  : state = GameState(
+          level: level,
+          random: random,
+          rows: rows,
+          cols: cols,
+          endless: endless,
+        ),
         super(
           camera: CameraComponent.withFixedResolution(width: 1280, height: 720),
         );
@@ -42,7 +54,8 @@ class GardenGame extends FlameGame {
     camera.viewfinder.anchor = Anchor.topLeft;
     camera.viewfinder.position = Vector2.zero();
     await sprites.load();
-    board = GridBoard()..onCellTap = (r, c) => state.tapCell(r, c);
+    board = GridBoard(rows: state.rows, cols: state.cols)
+      ..onCellTap = (r, c) => state.tapCell(r, c);
     world.add(board);
     _sync = SyncLayer(this);
   }

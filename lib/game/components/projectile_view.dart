@@ -7,7 +7,7 @@ import '../grid_board.dart';
 import '../sprite_registry.dart';
 
 class ProjectileView extends PositionComponent {
-  ProjectileView(this.projectile, SpriteRegistry sprites)
+  ProjectileView(this.projectile, SpriteRegistry sprites, this.board)
       : super(size: Vector2.all(24), anchor: Anchor.center) {
     final s = sprites.sprite(projectile.slows ? 'icepea_shot' : 'pea');
     if (s != null) add(SpriteComponent(sprite: s, size: size));
@@ -24,13 +24,14 @@ class ProjectileView extends PositionComponent {
   }
 
   final Projectile projectile;
+  final GridBoard board;
   late final Paint _paint;
   late final Paint _outline;
   late final bool _hasSprite;
 
   void syncFromState() {
-    final c = GridBoard.cellToPixel(projectile.row, projectile.col);
-    position = Vector2(c.x, c.y - GridBoard.cellH * 0.15);
+    final c = board.cellToPixel(projectile.row, projectile.col);
+    position = Vector2(c.x, c.y - board.cellH * 0.15);
   }
 
   @override

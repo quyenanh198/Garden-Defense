@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../config/balance.dart';
+import '../core/game_state.dart';
 import '../data/level_loader.dart';
 import 'game_screen.dart';
 import 'theme.dart';
@@ -31,6 +34,29 @@ class _MenuScreenState extends State<MenuScreen> {
     }
   }
 
+  Future<void> _playEndless() async {
+    if (_launching) return;
+    _launching = true;
+    try {
+      // Desktop: lưới 10×20; Android giữ 5×9 (docs/GAME_DESIGN.md).
+      final desktop = defaultTargetPlatform == TargetPlatform.windows ||
+          defaultTargetPlatform == TargetPlatform.linux ||
+          defaultTargetPlatform == TargetPlatform.macOS;
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => GameScreen(
+            level: GameState.endlessConfig(),
+            rows: desktop ? Balance.endlessRowsDesktop : Balance.rows,
+            cols: desktop ? Balance.endlessColsDesktop : Balance.cols,
+            endless: true,
+          ),
+        ),
+      );
+    } finally {
+      _launching = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,6 +77,11 @@ class _MenuScreenState extends State<MenuScreen> {
               label: 'Chơi level 1',
               primary: true,
               onTap: _play,
+            ),
+            const SizedBox(height: 16),
+            ClayButton(
+              label: 'Endless',
+              onTap: _playEndless,
             ),
           ],
         ),

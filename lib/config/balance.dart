@@ -50,6 +50,23 @@ class Balance {
 
   static const double hugeWaveWarningLead = 3;
 
+  // Endless (M8) — spec trong docs/GAME_DESIGN.md.
+  static const int endlessStartingSun = 150;
+  static const double endlessFirstWaveTime = 20;
+  static const double endlessBaseInterval = 18;
+  static const double endlessIntervalStep = 0.25;
+  static const double endlessMinInterval = 6;
+  static const int endlessHugeEvery = 10;
+  static const int endlessRowsDesktop = 10;
+  static const int endlessColsDesktop = 20;
+  static const double endlessBucketChance = 0.2;
+  static const double endlessConeChance = 0.3;
+  static const int endlessConeFromWave = 3;
+  static const int endlessBucketFromWave = 8;
+
+  /// Nâng cấp cây (chỉ Endless): giá ×2, hiệu lực ×2, mỗi cây 1 lần.
+  static const int upgradeFactor = 2;
+
   static const Map<String, PlantSpec> plants = {
     'sunflower': PlantSpec(
       id: 'sunflower',

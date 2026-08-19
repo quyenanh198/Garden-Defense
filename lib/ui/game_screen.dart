@@ -1,6 +1,7 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
+import '../config/balance.dart';
 import '../data/level_data.dart';
 import '../game/garden_game.dart';
 import 'hud/hud_bar.dart';
@@ -14,8 +15,17 @@ const _virtualH = 720.0;
 const _hudH = 100.0;
 
 class GameScreen extends StatefulWidget {
-  const GameScreen({super.key, required this.level});
+  const GameScreen({
+    super.key,
+    required this.level,
+    this.rows = Balance.rows,
+    this.cols = Balance.cols,
+    this.endless = false,
+  });
   final LevelData level;
+  final int rows;
+  final int cols;
+  final bool endless;
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -24,13 +34,20 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   late GardenGame game;
 
+  GardenGame _newGame() => GardenGame(
+        level: widget.level,
+        rows: widget.rows,
+        cols: widget.cols,
+        endless: widget.endless,
+      );
+
   @override
   void initState() {
     super.initState();
-    game = GardenGame(level: widget.level);
+    game = _newGame();
   }
 
-  void _retry() => setState(() => game = GardenGame(level: widget.level));
+  void _retry() => setState(() => game = _newGame());
 
   void _pause() {
     game.state.pause();
@@ -64,6 +81,7 @@ class _GameScreenState extends State<GameScreen> {
               ),
           'result': (context, g) => ResultOverlay(
                 phase: g.state.phase,
+                endlessWave: g.state.endless ? g.state.endlessWave : null,
                 onRetry: _retry,
                 onContinue: _quit,
               ),

@@ -34,6 +34,10 @@ WaveSpawner đọc `level_01.json`. Điều kiện thắng/thua theo GAME_DESIGN
 Menu, chọn level, unlock tiến độ (shared_preferences), pause, âm thanh cơ bản (thêm `flame_audio` ở bước này), hiệu ứng chết/trúng đạn tối thiểu.
 → **Verify**: vòng lặp menu → chơi → thắng → level sau mở khóa → thoát app mở lại vẫn giữ tiến độ; build `flutter build apk --release` cài được trên máy thật.
 
+## M8 — Chế độ Endless (được kéo lên làm trước M6-asset/M7 theo yêu cầu 2026-08-19)
+Chế độ sinh tồn theo spec trong `GAME_DESIGN.md`: sinh đợt procedural leo thang, không có thắng, thua hiện số đợt sống sót. Lưới tham số hóa: desktop 10×20, Android 5×9 (campaign giữ 5×9). Upgrade cây 1 cấp giá 2×, hiệu lực ×2, chỉ trong Endless.
+→ **Verify**: menu có nút Endless trên cả 2 nền tảng; desktop thấy lưới 10×20; nâng cấp cây hoạt động (trừ đúng 2× giá, chỉ 1 lần, damage/sun/HP nhân đôi); thua hiện "Sống sót N đợt"; test spawner (deterministic, leo thang, huge mỗi 10 đợt) + test upgrade pass; campaign 5×9 không đổi hành vi (toàn bộ test cũ pass).
+
 ## Nguyên tắc khi thực thi
 
 - Mỗi milestone là một nhánh việc độc lập; kết thúc bằng `flutter analyze` sạch + `flutter test` pass.

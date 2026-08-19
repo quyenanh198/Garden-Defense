@@ -19,7 +19,16 @@ Review effort cao ra 7 finding, **đã fix hết** (test-first; test trong `test
 6. ✅ **Cột spawn zombie hardcode `9.0`** — `lib/core/entities.dart`: default `Balance.cols * 1.0`.
 7. ✅ **Thanh máu wallnut gate bằng heuristic `hp >= 1000`** — `PlantView.showsHpBar` (hiện khi `plant.hp < plant.spec.hp`), mọi cây hiện thanh khi mất máu.
 
-Sau toàn bộ session: `flutter analyze` sạch · `flutter test` 61 pass.
+## M8: Chế độ Endless + upgrade (theo yêu cầu, kéo lên trước M6-asset/M7)
+Spec đầy đủ trong `docs/GAME_DESIGN.md` (mục "Chế độ Endless"), tiêu chí trong `docs/ROADMAP.md` M8. Quyết định của người dùng: làm ngay; Endless có mặt cả 2 nền tảng (desktop 10×20, Android 5×9); upgrade 1 cấp giá 2×, hiệu lực ×2.
+- **Lưới tham số hóa**: `GameState(rows, cols)` (mặc định 5×9), `GridBoard` chuyển từ hằng static sang instance — views nhận `board` qua constructor. Campaign không đổi hành vi (toàn bộ test cũ pass nguyên trạng).
+- **`EndlessSpawner`** (`lib/core/endless_spawner.dart`) implements interface `Spawner` chung với `WaveSpawner`: nhịp 18s co 0.25s/đợt sàn 6s, cỡ đợt 1+đợt÷5 (trần 2×hàng), huge mỗi 10 đợt có banner, mix walker/cone(30%, từ đợt 3)/bucket(20%, từ đợt 8), deterministic theo seed. `allSpawned=false` → không bao giờ thắng.
+- **Upgrade (chỉ Endless)**: tap cây khi không chọn thẻ → trừ 2× giá, `upgraded=true` 1 lần duy nhất; damage đạn ×2, sun sinh ×2, +HP gốc mọi cây; event `PlantUpgraded`, `PlantResult.alreadyUpgraded`; PlantView vẽ viền vàng, thanh máu theo `maxHp`.
+- **UI**: nút "Endless" ở menu (chọn lưới theo `defaultTargetPlatform`), HUD chip "Đợt N", màn thua hiện "Sống sót N đợt" + nút "Về menu".
+- Test: `test/core/endless_test.dart` (spawner deterministic/leo thang/huge/warning/sàn nhịp; spawn mép phải lưới 20 cột; sun trời trong biên; upgrade đủ nhánh; campaign không có upgrade) + widget test nút Endless.
+- **Chưa verify tay trên desktop thật** (lưới 10×20 nhìn ổn không, cân bằng Endless) — cần `flutter run -d windows`.
+
+Sau toàn bộ session: `flutter analyze` sạch · `flutter test` 73 pass.
 
 **PlantCard overflow (finding phát sinh) — đã fix:** dòng "thiếu sun" giờ là 1 dòng trong `FittedBox` co giãn (`lib/ui/hud/plant_card.dart`), có widget test tái hiện (`test/ui/plant_card_test.dart`).
 
@@ -53,6 +62,7 @@ flutter test
 - Plugin `ecc`, `multi-ai-skills`, `superpowers` (+ `ui-ux-pro-max`, `obsidian`, v.v.) **đã enable ở tài khoản** nhưng skill chỉ nạp lúc tạo session → `/caveman:full` không chạy được trong session này. Session mới sẽ có sẵn; session này dùng `/code-review` built-in thay thế.
 
 ## Việc kế tiếp
+0. M8: verify tay Endless trên desktop (`flutter run -d windows`): lưới 10×20 hiển thị, upgrade bằng tap, chip Đợt, màn thua; tune cân bằng Endless nếu cần (số liệu trong `balance.dart` + `GAME_DESIGN.md`).
 1. M6: chơi tay level 2–10 trên thiết bị để verify độ khó thật (sim đã chứng minh thắng được; cảm giác "suýt thua" ở 8–10 cần người thật).
 2. M6: sprite CC0 theo `docs/ASSETS.md` + font OFL; cập nhật `manifest.json`, `CREDITS.md`, bỏ comment `fonts:` trong pubspec.
 3. M7: `MenuScreen` đầy đủ + `LevelSelectScreen` + `ProgressStore` (shared_preferences), âm thanh (`flame_audio`), hiệu ứng, build APK.

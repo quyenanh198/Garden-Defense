@@ -6,6 +6,7 @@ enum PlantResult {
   onCooldown,
   notAvailable,
   notPlaying,
+  alreadyUpgraded,
 }
 
 sealed class GameEvent {
@@ -22,6 +23,11 @@ class PlantPlaced extends GameEvent {
 class PlantRejected extends GameEvent {
   const PlantRejected(this.reason);
   final PlantResult reason;
+}
+
+class PlantUpgraded extends GameEvent {
+  const PlantUpgraded(this.plantId);
+  final int plantId;
 }
 
 class PlantDied extends GameEvent {
