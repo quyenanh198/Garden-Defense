@@ -1,0 +1,93 @@
+/// Mọi số liệu cân bằng. Mirror của docs/GAME_DESIGN.md — nếu lệch, docs thắng.
+enum PlantAction { produceSun, shoot, shootIce, none }
+
+class PlantSpec {
+  const PlantSpec({
+    required this.id,
+    required this.name,
+    required this.cost,
+    required this.hp,
+    required this.plantCooldown,
+    required this.action,
+  });
+  final String id;
+  final String name;
+  final int cost;
+  final double hp;
+  final double plantCooldown; // giây
+  final PlantAction action;
+}
+
+class ZombieSpec {
+  const ZombieSpec({required this.id, required this.name, required this.hp});
+  final String id;
+  final String name;
+  final double hp;
+}
+
+class Balance {
+  Balance._();
+
+  static const int rows = 5;
+  static const int cols = 9;
+
+  static const double zombieCellsPerSecond = 1 / 4.7;
+  static const double zombieBiteDps = 100;
+  static const double zombieDyingDuration = 0.5;
+
+  static const int skySunValue = 25;
+  static const double skySunInterval = 10;
+  static const double sunLifetime = 8;
+  static const int sunflowerValue = 25;
+  static const double sunflowerInterval = 24;
+
+  static const double peaDamage = 20;
+  static const double peaSpeed = 6; // ô / giây
+  static const double fireInterval = 1.4;
+  static const double iceSlowFactor = 0.5;
+  static const double iceSlowDuration = 3;
+  static const double projectileHitRadius = 0.3;
+
+  static const double hugeWaveWarningLead = 3;
+
+  static const Map<String, PlantSpec> plants = {
+    'sunflower': PlantSpec(
+      id: 'sunflower',
+      name: 'Hoa mặt trời',
+      cost: 50,
+      hp: 300,
+      plantCooldown: 7.5,
+      action: PlantAction.produceSun,
+    ),
+    'peashooter': PlantSpec(
+      id: 'peashooter',
+      name: 'Cây bắn đậu',
+      cost: 100,
+      hp: 300,
+      plantCooldown: 7.5,
+      action: PlantAction.shoot,
+    ),
+    'wallnut': PlantSpec(
+      id: 'wallnut',
+      name: 'Quả óc chó',
+      cost: 50,
+      hp: 4000,
+      plantCooldown: 30,
+      action: PlantAction.none,
+    ),
+    'icepea': PlantSpec(
+      id: 'icepea',
+      name: 'Đậu băng',
+      cost: 175,
+      hp: 300,
+      plantCooldown: 7.5,
+      action: PlantAction.shootIce,
+    ),
+  };
+
+  static const Map<String, ZombieSpec> zombies = {
+    'walker': ZombieSpec(id: 'walker', name: 'Zombie thường', hp: 200),
+    'cone': ZombieSpec(id: 'cone', name: 'Zombie nón', hp: 560),
+    'bucket': ZombieSpec(id: 'bucket', name: 'Zombie xô', hp: 1300),
+  };
+}
