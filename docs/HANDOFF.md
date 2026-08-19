@@ -28,7 +28,14 @@ Spec đầy đủ trong `docs/GAME_DESIGN.md` (mục "Chế độ Endless"), ti�
 - Test: `test/core/endless_test.dart` (spawner deterministic/leo thang/huge/warning/sàn nhịp; spawn mép phải lưới 20 cột; sun trời trong biên; upgrade đủ nhánh; campaign không có upgrade) + widget test nút Endless.
 - **Chưa verify tay trên desktop thật** (lưới 10×20 nhìn ổn không, cân bằng Endless) — cần `flutter run -d windows`.
 
-Sau toàn bộ session: `flutter analyze` sạch · `flutter test` 73 pass.
+## M6-asset + M7 (tiếp theo trong session)
+- **Docs design tổng quát**: `GAME_DESIGN.md` thêm "Tầm nhìn & trụ cột thiết kế" (3 trụ cột, nhịp một trận, nguyên tắc UX, phong cách nghe nhìn) và "Tiến độ & mở khóa (M7)" (2 khóa `highestUnlocked`/`endlessBest`, chỉ tăng). `ARCHITECTURE.md` cập nhật lưới tham số, EndlessSpawner, sfx, progress_store.
+- **M6-asset**: 10 sprite PNG **vẽ gốc** (script PIL — flat + viền ink, cùng ngôn ngữ claymorphism; thay art đẹp hơn chỉ cần ghi đè file, xem `assets/CREDITS.md`); font **Fredoka-Bold + Nunito** (OFL, tải từ Google Fonts) đã vào `assets/fonts/`, pubspec đã mở mục `fonts:`.
+- **M7 tiến độ**: `ProgressStore` (shared_preferences), `LevelSelectScreen` 10 ô khóa/mở, menu mới (Chơi → chọn level, Endless, kỷ lục Endless), `GameScreen` thêm `onWon` (mở khóa level kế) + `onEndlessEnd` (lưu kỷ lục) qua listener `game.events`.
+- **M7 âm thanh**: dep `flame_audio ^2.11.0` (ROADMAP chỉ định); 7 file WAV **sinh gốc** (`assets/audio/`): plant/hit/sun/upgrade/huge/win/lose; helper `Sfx.play` nuốt lỗi khi thiếu plugin nên widget test không vỡ. Hiệu ứng chết/trúng đạn đã có sẵn từ M5 (hitFlash + thu nhỏ khi chết) — đạt mức "tối thiểu" của ROADMAP.
+- Test mới: progress_store (3), menu/level-select/double-tap viết lại theo luồng mới, callback endless-thua.
+
+Sau toàn bộ session: `flutter analyze` sạch · `flutter test` 78 pass.
 
 **PlantCard overflow (finding phát sinh) — đã fix:** dòng "thiếu sun" giờ là 1 dòng trong `FittedBox` co giãn (`lib/ui/hud/plant_card.dart`), có widget test tái hiện (`test/ui/plant_card_test.dart`).
 
@@ -62,11 +69,10 @@ flutter test
 - Plugin `ecc`, `multi-ai-skills`, `superpowers` (+ `ui-ux-pro-max`, `obsidian`, v.v.) **đã enable ở tài khoản** nhưng skill chỉ nạp lúc tạo session → `/caveman:full` không chạy được trong session này. Session mới sẽ có sẵn; session này dùng `/code-review` built-in thay thế.
 
 ## Việc kế tiếp
-0. M8: verify tay Endless trên desktop (`flutter run -d windows`): lưới 10×20 hiển thị, upgrade bằng tap, chip Đợt, màn thua; tune cân bằng Endless nếu cần (số liệu trong `balance.dart` + `GAME_DESIGN.md`).
-1. M6: chơi tay level 2–10 trên thiết bị để verify độ khó thật (sim đã chứng minh thắng được; cảm giác "suýt thua" ở 8–10 cần người thật).
-2. M6: sprite CC0 theo `docs/ASSETS.md` + font OFL; cập nhật `manifest.json`, `CREDITS.md`, bỏ comment `fonts:` trong pubspec.
-3. M7: `MenuScreen` đầy đủ + `LevelSelectScreen` + `ProgressStore` (shared_preferences), âm thanh (`flame_audio`), hiệu ứng, build APK.
-4. Cải tiến nhỏ từ verify M5: icon thẻ plant đang là ô màu (thay bằng sprite khi có); zombie spawn ở col 9 ngoài lưới (ổn, có thể thêm nền "đường vào").
+1. **Verify tay trên thiết bị thật** (tiêu chí ROADMAP đều đòi máy thật):
+   - M6: chơi level 2–10, sprite/font mới hiển thị đúng; M7: vòng lặp menu → chơi → thắng → mở khóa → thoát app vẫn giữ tiến độ; âm thanh kêu đúng chỗ; M8: Endless desktop 10×20 + upgrade.
+2. **APK release: build trên máy dev** — môi trường remote bị network policy chặn `dl.google.com` (nguồn Android SDK) nên không cài được SDK ở đó; `maven.google.com`/`services.gradle.org` mở nên chỉ thiếu đúng SDK. Trên máy dev đã có Android SDK thì `flutter build apk --release` là đủ; code đã sẵn sàng (fonts/assets khai báo đúng pubspec).
+3. Cải tiến nhỏ: icon thẻ plant trong HUD vẫn là ô màu (chưa dùng sprite mới); có thể thêm nền "đường vào" bên phải lưới.
 
 ## Chờ người dùng
 - Cài Android SDK command-line tools → `flutter doctor` xanh Android → `flutter build apk --release`.

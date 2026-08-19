@@ -10,6 +10,7 @@ import '../core/game_event.dart';
 import '../core/game_state.dart';
 import '../data/level_data.dart';
 import 'grid_board.dart';
+import 'sfx.dart';
 import 'sprite_registry.dart';
 import 'sync_layer.dart';
 
@@ -71,12 +72,21 @@ class GardenGame extends FlameGame {
     final evs = state.takeEvents();
     if (evs.isNotEmpty) {
       for (final e in evs) {
-        if (e is ZombieHit) _sync.zombieView(e.zombieId)?.hitFlash();
+        if (e is ZombieHit) {
+          _sync.zombieView(e.zombieId)?.hitFlash();
+          Sfx.play('hit');
+        }
         if (e is HugeWaveWarning) {
           hugeWaveSeq++;
           overlays.remove('hugeWave');
           overlays.add('hugeWave');
+          Sfx.play('huge');
         }
+        if (e is PlantPlaced) Sfx.play('plant');
+        if (e is PlantUpgraded) Sfx.play('upgrade');
+        if (e is SunCollected) Sfx.play('sun');
+        if (e is GameWon) Sfx.play('win');
+        if (e is GameLost) Sfx.play('lose');
       }
       events.value = evs;
     }

@@ -2,6 +2,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
 import '../config/balance.dart';
+import '../core/game_event.dart';
 import '../data/level_data.dart';
 import '../game/garden_game.dart';
 import 'hud/hud_bar.dart';
@@ -21,11 +22,19 @@ class GameScreen extends StatefulWidget {
     this.rows = Balance.rows,
     this.cols = Balance.cols,
     this.endless = false,
+    this.onWon,
+    this.onEndlessEnd,
   });
   final LevelData level;
   final int rows;
   final int cols;
   final bool endless;
+
+  /// Gọi khi thắng level (mở khóa level kế).
+  final VoidCallback? onWon;
+
+  /// Gọi khi thua ở Endless với số đợt sống sót (lưu kỷ lục).
+  final ValueChanged<int>? onEndlessEnd;
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -45,9 +54,29 @@ class _GameScreenState extends State<GameScreen> {
   void initState() {
     super.initState();
     game = _newGame();
+    game.events.addListener(_onEvents);
   }
 
-  void _retry() => setState(() => game = _newGame());
+  @override
+  void dispose() {
+    game.events.removeListener(_onEvents);
+    super.dispose();
+  }
+
+  void _onEvents() {
+    for (final e in game.events.value) {
+      if (e is GameWon) widget.onWon?.call();
+      if (e is GameLost && widget.endless) {
+        widget.onEndlessEnd?.call(game.state.endlessWave);
+      }
+    }
+  }
+
+  void _retry() => setState(() {
+        game.events.removeListener(_onEvents);
+        game = _newGame();
+        game.events.addListener(_onEvents);
+      });
 
   void _pause() {
     game.state.pause();
