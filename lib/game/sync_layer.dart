@@ -2,6 +2,7 @@ import 'package:flame/components.dart';
 
 import '../core/entities.dart';
 import 'components/plant_view.dart';
+import 'components/projectile_view.dart';
 import 'components/zombie_view.dart';
 import 'garden_game.dart';
 
@@ -12,6 +13,7 @@ class SyncLayer {
 
   final Map<int, PlantView> _plants = {};
   final Map<int, ZombieView> _zombies = {};
+  final Map<int, ProjectileView> _projectiles = {};
 
   ZombieView? zombieView(int id) => _zombies[id];
 
@@ -28,6 +30,13 @@ class SyncLayer {
       _zombies,
       (z) => z.id,
       create: (z) => ZombieView(z, game.sprites),
+      update: (v) => v.syncFromState(),
+    );
+    _syncList<Projectile, ProjectileView>(
+      game.state.projectiles,
+      _projectiles,
+      (p) => p.id,
+      create: (p) => ProjectileView(p, game.sprites),
       update: (v) => v.syncFromState(),
     );
   }
