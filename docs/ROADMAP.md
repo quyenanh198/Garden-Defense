@@ -1,5 +1,7 @@
 # Lộ trình — 7 milestone
 
+> Dev target hiện tại: Windows desktop (`flutter run -d windows`) vì máy dev chưa có Android SDK. Verify trên APK thực hiện ở M5 (thử) và bắt buộc ở M7 sau khi cài Android SDK command-line tools.
+
 Mỗi milestone chỉ được coi là xong khi **chạy được tiêu chí xác minh trên thiết bị/emulator Android thật**. Không làm trước tính năng của milestone sau.
 
 ## M1 — Khung + lưới

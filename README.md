@@ -6,17 +6,20 @@ Game tower defense 2D theo lưới (lấy cảm hứng từ cơ chế Plants vs 
 
 ## Trạng thái
 
-Giai đoạn: **khung dự án + docs** — chưa có code game logic. Xem lộ trình tại [docs/ROADMAP.md](docs/ROADMAP.md).
+Giai đoạn: **M1–M5 vertical slice đang triển khai** (xem `docs/HANDOFF.md`). Xem lộ trình tại [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## Quick start
 
 ```bash
 # Yêu cầu: Flutter SDK (stable), Android SDK
-flutter create . --platforms=android   # sinh scaffold Android quanh khung có sẵn
+flutter create . --project-name garden_defense --platforms=android,windows
 flutter pub get
+flutter run -d windows                 # dev nhanh trên Windows
 flutter run                            # chạy trên máy/emulator Android
 flutter build apk --release            # build APK sideload
 ```
+
+> Flame ghim `^1.35.1` vì máy dev dùng Flutter 3.32 / Dart 3.8. Nâng Flutter ≥ 3.41 để dùng flame ^1.38.
 
 ## Tài liệu
 
