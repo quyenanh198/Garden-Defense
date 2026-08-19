@@ -71,7 +71,7 @@ flutter test
 ## Việc kế tiếp
 1. **Verify tay trên thiết bị thật** (tiêu chí ROADMAP đều đòi máy thật):
    - M6: chơi level 2–10, sprite/font mới hiển thị đúng; M7: vòng lặp menu → chơi → thắng → mở khóa → thoát app vẫn giữ tiến độ; âm thanh kêu đúng chỗ; M8: Endless desktop 10×20 + upgrade.
-2. APK release: xem trạng thái build ở cuối mục này; cài lên máy thật để chốt M7.
+2. **APK release: build trên máy dev** — môi trường remote bị network policy chặn `dl.google.com` (nguồn Android SDK) nên không cài được SDK ở đó; `maven.google.com`/`services.gradle.org` mở nên chỉ thiếu đúng SDK. Trên máy dev đã có Android SDK thì `flutter build apk --release` là đủ; code đã sẵn sàng (fonts/assets khai báo đúng pubspec).
 3. Cải tiến nhỏ: icon thẻ plant trong HUD vẫn là ô màu (chưa dùng sprite mới); có thể thêm nền "đường vào" bên phải lưới.
 
 ## Chờ người dùng
