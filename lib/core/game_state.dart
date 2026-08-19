@@ -172,15 +172,15 @@ class GameState {
   void _moveProjectiles(double dt) {
     final dead = <Projectile>[];
     for (final pr in projectiles) {
+      // Quét cả đoạn đường đi trong frame: dt lớn (máy giật) không được
+      // làm đạn nhảy qua zombie mà không trúng.
+      final from = pr.col;
       pr.col += Balance.peaSpeed * dt;
-      if (pr.col > Balance.cols + 0.5) {
-        dead.add(pr);
-        continue;
-      }
       Zombie? hit;
       for (final z in zombies) {
         if (!z.isAlive || z.row != pr.row) continue;
-        if ((z.col - pr.col).abs() < Balance.projectileHitRadius) {
+        if (z.col >= from - Balance.projectileHitRadius &&
+            z.col <= pr.col + Balance.projectileHitRadius) {
           if (hit == null || z.col < hit.col) hit = z;
         }
       }
@@ -193,6 +193,8 @@ class GameState {
           hit.state = ZombieState.dying;
           _events.add(ZombieDied(hit.id));
         }
+      } else if (pr.col > Balance.cols + 0.5) {
+        dead.add(pr);
       }
     }
     projectiles.removeWhere(dead.contains);
@@ -216,7 +218,10 @@ class GameState {
             z.col -= speed * dt;
           } else {
             z.state = ZombieState.eating;
-            target.hp -= Balance.zombieBiteDps * dt;
+            // Bị làm chậm thì ăn cũng chậm (docs/GAME_DESIGN.md: chậm 50%).
+            target.hp -= Balance.zombieBiteDps *
+                (z.isSlowed ? Balance.iceSlowFactor : 1) *
+                dt;
             if (target.hp <= 0) {
               plants.remove(target);
               _events.add(PlantDied(target.id));

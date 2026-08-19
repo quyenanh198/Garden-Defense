@@ -6,15 +6,29 @@ import 'theme.dart';
 import 'widgets/clay_button.dart';
 
 /// Menu tối giản cho M5. Chọn level + unlock làm ở M7.
-class MenuScreen extends StatelessWidget {
+class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
 
-  Future<void> _play(BuildContext context) async {
-    final level = await LevelLoader.load(1);
-    if (!context.mounted) return;
-    await Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => GameScreen(level: level)),
-    );
+  @override
+  State<MenuScreen> createState() => _MenuScreenState();
+}
+
+class _MenuScreenState extends State<MenuScreen> {
+  // Chặn tap lặp: _play có await trước khi push nên tap đúp sẽ push 2 lần.
+  bool _launching = false;
+
+  Future<void> _play() async {
+    if (_launching) return;
+    _launching = true;
+    try {
+      final level = await LevelLoader.load(1);
+      if (!mounted) return;
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => GameScreen(level: level)),
+      );
+    } finally {
+      _launching = false;
+    }
   }
 
   @override
@@ -36,7 +50,7 @@ class MenuScreen extends StatelessWidget {
             ClayButton(
               label: 'Chơi level 1',
               primary: true,
-              onTap: () => _play(context),
+              onTap: _play,
             ),
           ],
         ),

@@ -73,4 +73,31 @@ void main() {
   test('parse handles JSON string', () {
     expect(LevelData.parse(jsonEncode(valid())).id, 1);
   });
+  test('wrong-typed field throws LevelFormatException naming the field', () {
+    final j = valid();
+    (j['waves'] as List)[0]['row'] = '2';
+    expect(
+      () => LevelData.fromJson(j),
+      throwsA(
+        isA<LevelFormatException>().having(
+          (e) => e.errors.join(), 'errors', contains('waves[0].row'),
+        ),
+      ),
+    );
+  });
+  test('missing required field throws LevelFormatException', () {
+    final j = valid()..remove('id');
+    expect(() => LevelData.fromJson(j), throwsA(isA<LevelFormatException>()));
+    final k = valid();
+    ((k['waves'] as List)[0] as Map).remove('time');
+    expect(() => LevelData.fromJson(k), throwsA(isA<LevelFormatException>()));
+  });
+  test('non-string plant id throws LevelFormatException', () {
+    final j = valid()..['availablePlants'] = ['peashooter', 7];
+    expect(() => LevelData.fromJson(j), throwsA(isA<LevelFormatException>()));
+  });
+  test('invalid JSON text throws LevelFormatException', () {
+    expect(() => LevelData.parse('{oops'), throwsA(isA<LevelFormatException>()));
+    expect(() => LevelData.parse('[1,2]'), throwsA(isA<LevelFormatException>()));
+  });
 }
