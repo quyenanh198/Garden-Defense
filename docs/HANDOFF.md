@@ -35,9 +35,4 @@ flutter test
 ## Chờ người dùng
 - Cài Android SDK command-line tools → `flutter doctor` xanh Android → `flutter build apk --release` (verify M5/M7 trên máy thật).
 - Tải sprite CC0 + font theo hướng dẫn trên.
-- GitHub: máy không có `gh`, Claude không tạo repo được. Tạo repo trống `quyenanh198/garden-defense` trên GitHub rồi chạy:
-  ```
-  git remote add origin https://github.com/quyenanh198/garden-defense.git
-  git push -u origin main
-  ```
-  (nếu remote đã được thêm sẵn thì chỉ cần `git push -u origin main`).
+- GitHub: đã push `main` + `feat/m1-m5-vertical-slice` lên https://github.com/quyenanh198/Garden-Defense (remote `origin`).
