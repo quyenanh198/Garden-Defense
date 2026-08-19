@@ -1,11 +1,12 @@
 # Session handoff — Garden Defense
 
-Cập nhật: 2026-08-19 — sau M1
+Cập nhật: 2026-08-19 — sau M3
 
 ## Trạng thái
-- Milestone xong: M1 (lưới 5×9 + tap in `(row, col)`), verify trên Windows desktop bằng screenshot + log.
-- Đang dở: M2 (core sim đã có entities/events/wave_spawner, chưa có `game_state.dart`, chưa có view).
-- `flutter analyze`: sạch · `flutter test`: 12 pass (balance + level_data).
+- Milestone xong: M1, M2, M3 — verify trên Windows desktop bằng screenshot (grid, zombie đi/ăn, thua, đạn bay + trừ máu đúng hàng).
+- Đang dở: M4 (sun economy + HUD). Core đã có sẵn logic sun/cooldown/icepea; còn test M4 + SunView + HUD Flutter.
+- `flutter analyze`: sạch · `flutter test`: 21 pass.
+- Asset: chưa có sprite; `assets/images/manifest.json` đã khai báo ID, thiếu file → placeholder. Nguồn gợi ý: `docs/ASSETS.md`.
 - Nhánh: `feat/m1-m5-vertical-slice` (merge vào `main` khi xong M5).
 
 ## Chạy
@@ -22,9 +23,9 @@ Lưu ý: nếu build báo `LNK1168 cannot open ... garden_defense.exe` thì app 
 - Plan chi tiết: `docs/superpowers/plans/2026-08-19-garden-defense-m1-m5.md`; spec: `docs/superpowers/specs/2026-08-19-garden-defense-m1-m5-design.md`.
 
 ## Việc kế tiếp
-1. Task 5: `lib/core/game_state.dart` + `test/core/game_state_m2_test.dart`.
-2. Task 6: SpriteRegistry, placeholder, SyncLayer, PlantView/ZombieView, overlay thua.
-3. Task 7: asset manifest + docs/ASSETS.md.
+1. Task 10: `test/core/game_state_m4_test.dart`.
+2. Task 11: SunView, HudBar/PlantCard, PauseOverlay, font README.
+3. M5: LevelLoader + menu, test M5, HugeWaveBanner.
 
 ## Chờ người dùng
 - Cài Android SDK command-line tools để build APK.
