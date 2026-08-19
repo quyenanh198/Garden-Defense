@@ -27,7 +27,7 @@ class Zombie {
     required this.id,
     required this.spec,
     required this.row,
-    this.col = 9.0,
+    this.col = Balance.cols * 1.0, // mép phải lưới
   }) : hp = spec.hp;
   final int id;
   final ZombieSpec spec;

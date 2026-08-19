@@ -58,8 +58,10 @@ class _GameScreenState extends State<GameScreen> {
           'hud': (context, g) => _HudOverlay(game: g, onPause: _pause),
           'pause': (context, g) =>
               PauseOverlay(onResume: _resume, onRetry: _retry, onQuit: _quit),
-          'hugeWave': (context, g) =>
-              HugeWaveBanner(onDone: () => g.overlays.remove('hugeWave')),
+          'hugeWave': (context, g) => HugeWaveBanner(
+                key: ValueKey(g.hugeWaveSeq),
+                onDone: () => g.overlays.remove('hugeWave'),
+              ),
           'result': (context, g) => ResultOverlay(
                 phase: g.state.phase,
                 onRetry: _retry,

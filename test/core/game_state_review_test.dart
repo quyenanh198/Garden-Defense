@@ -39,6 +39,11 @@ void main() {
     expect(far.hp, Balance.zombies['walker']!.hp);
   });
 
+  test('zombie spawn column derives from Balance.cols', () {
+    final z = Zombie(id: 1, spec: Balance.zombies['walker']!, row: 0);
+    expect(z.col, Balance.cols.toDouble());
+  });
+
   test('slowed zombie eats at half DPS', () {
     final g = newGame(lvl: level(waves: _far));
     g.selectPlant('wallnut');

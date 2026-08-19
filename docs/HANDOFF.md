@@ -8,18 +8,20 @@ Cập nhật: 2026-08-19 — sau session code review toàn bộ `lib/` (không �
 - Nhánh: `main` là mới nhất. Session này chạy trên `claude/caveman-code-review-2gxbxp` (ngang `main`, chỉ thêm handoff này).
 - Asset: chưa có sprite/font (placeholder vẽ bằng code). Hướng dẫn: `docs/ASSETS.md`, `assets/fonts/README.md`.
 
-## Kết quả session này: code review `lib/` (~1.900 dòng) + fix finding 1–4
-Review effort cao ra 7 finding. **Finding 1–4 đã fix (test-first, mỗi cái có test tái hiện trong `test/core/game_state_review_test.dart`, `test/data/level_data_test.dart`, `test/ui/menu_screen_test.dart`); finding 5–7 còn mở.**
+## Kết quả session này: code review `lib/` (~1.900 dòng) + fix cả 7 finding
+Review effort cao ra 7 finding, **đã fix hết** (test-first; test trong `test/core/game_state_review_test.dart`, `test/data/level_data_test.dart`, `test/ui/menu_screen_test.dart`, `test/ui/huge_wave_banner_test.dart`, `test/game/plant_view_test.dart`).
 
 1. ✅ **Đạn xuyên qua zombie khi lag** — `lib/core/game_state.dart` `_moveProjectiles`: chuyển sang va chạm quét (swept) cả đoạn đường đạn đi trong frame, dt lớn không còn nhảy qua zombie; vẫn trúng zombie gần nhất trên đường bay.
 2. ✅ **JSON level sai kiểu crash bằng cast error** — `lib/data/level_data.dart`: đọc field qua `_read<T>` có kiểm tra kiểu, thiếu/sai kiểu ném `LevelFormatException` nêu tên field (vd `waves[0].row: expected int, got String`); JSON hỏng / top-level không phải object cũng thành `LevelFormatException`.
 3. ✅ **Double-tap "Chơi level 1" push 2 GameScreen** — `lib/ui/menu_screen.dart`: chuyển sang StatefulWidget với guard `_launching`.
 4. ✅ **Ice slow giờ giảm cả bite DPS** (quyết định: docs thắng, giống PvZ gốc) — `lib/core/game_state.dart`: zombie bị chậm cắn `zombieBiteDps * iceSlowFactor`; wallnut sau icepea trụ 80 s thay vì 40 s.
-5. ⬜ **Banner huge wave thứ 2 bị nuốt** — `lib/game/garden_game.dart:58`. Guard `overlays.isActive('hugeWave')` bỏ qua wave B nếu banner wave A (3 s) còn hiện; event đã tiêu thụ nên banner B không bao giờ xuất hiện.
-6. ⬜ **Cột spawn zombie hardcode `9.0`** — `lib/core/entities.dart:30`, trùng lặp `Balance.cols`. Đổi số cột sẽ làm zombie spawn lệch vào trong lưới.
-7. ⬜ **Thanh máu wallnut gate bằng heuristic `hp >= 1000`** — `lib/game/components/plant_view.dart:37`. Điều kiện đúng hơn: hiện thanh khi `plant.hp < plant.spec.hp`.
+5. ✅ **Banner huge wave thứ 2 bị nuốt** — `GardenGame.hugeWaveSeq` tăng mỗi cảnh báo; overlay remove+add và `HugeWaveBanner` nhận `ValueKey(hugeWaveSeq)` nên banner mới thay banner cũ với timer 3s chạy lại.
+6. ✅ **Cột spawn zombie hardcode `9.0`** — `lib/core/entities.dart`: default `Balance.cols * 1.0`.
+7. ✅ **Thanh máu wallnut gate bằng heuristic `hp >= 1000`** — `PlantView.showsHpBar` (hiện khi `plant.hp < plant.spec.hp`), mọi cây hiện thanh khi mất máu.
 
-Sau fix: `flutter analyze` sạch · `flutter test` 43 pass (35 cũ + 8 mới).
+Sau fix: `flutter analyze` sạch · `flutter test` 46 pass (35 cũ + 11 mới).
+
+**Finding mới phát hiện khi viết test (chưa fix):** `PlantCard` (72×88, `lib/ui/hud/plant_card.dart:59`) overflow ~13px khi hiện dòng "thiếu sun" (icon 40 + gap 4 + giá 16px + dòng 10px vượt chiều cao) — thấy qua font metric của flutter_test; trên máy thật cần verify, fix gợi ý: `FittedBox`/giảm gap hoặc `mainAxisSize.min`.
 
 Đã kiểm và cố ý không flag: mutation map cooldown khi lặp (an toàn — chỉ update key có sẵn), tap priority của sun (đúng), clamp nhịp bắn, vòng đời overlay pause/retry, số liệu balance khớp `docs/GAME_DESIGN.md`.
 
@@ -45,7 +47,7 @@ flutter test
 - Plugin `ecc`, `multi-ai-skills`, `superpowers` (+ `ui-ux-pro-max`, `obsidian`, v.v.) **đã enable ở tài khoản** nhưng skill chỉ nạp lúc tạo session → `/caveman:full` không chạy được trong session này. Session mới sẽ có sẵn; session này dùng `/code-review` built-in thay thế.
 
 ## Việc kế tiếp
-1. **Fix finding 5–7 còn lại** (test-first): banner huge wave, cột spawn, thanh máu wallnut.
+1. Fix nhỏ: `PlantCard` overflow khi hiện "thiếu sun" (xem finding mới ở trên).
 2. M6: 10 file level theo bảng độ khó trong `docs/GAME_DESIGN.md` (level 2–10), chơi thử từng level; chỉ thêm JSON.
 3. M6: sprite CC0 theo `docs/ASSETS.md` + font OFL; cập nhật `manifest.json`, `CREDITS.md`, bỏ comment `fonts:` trong pubspec.
 4. M7: `MenuScreen` đầy đủ + `LevelSelectScreen` + `ProgressStore` (shared_preferences), âm thanh (`flame_audio`), hiệu ứng, build APK.

@@ -31,11 +31,13 @@ class PlantView extends PositionComponent {
   final _hpBg = Paint()..color = const Color(0xFF7F1D1D);
   final _hpFg = Paint()..color = const Color(0xFF22C55E);
 
+  /// Thanh máu chỉ hiện khi cây đã mất máu.
+  bool get showsHpBar => plant.hp < plant.spec.hp;
+
   @override
   void render(Canvas canvas) {
     _placeholder?.paint(canvas, size);
-    if (plant.spec.hp >= 1000) {
-      // thanh máu chỉ cho wallnut
+    if (showsHpBar) {
       final w = size.x * (plant.hp / plant.spec.hp).clamp(0.0, 1.0);
       canvas.drawRect(Rect.fromLTWH(0, -10, size.x, 6), _hpBg);
       canvas.drawRect(Rect.fromLTWH(0, -10, w, 6), _hpFg);

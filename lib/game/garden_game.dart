@@ -30,6 +30,10 @@ class GardenGame extends FlameGame {
   /// Sự kiện của frame vừa rồi cho UI (banner, nháy ví...).
   final ValueNotifier<List<GameEvent>> events = ValueNotifier(const []);
 
+  /// Tăng mỗi cảnh báo huge wave; GameScreen dùng làm key để banner
+  /// mới thay banner cũ (timer 3s chạy lại) thay vì bị nuốt.
+  int hugeWaveSeq = 0;
+
   @override
   Color backgroundColor() => const Color(0xFF14532D);
 
@@ -55,7 +59,9 @@ class GardenGame extends FlameGame {
     if (evs.isNotEmpty) {
       for (final e in evs) {
         if (e is ZombieHit) _sync.zombieView(e.zombieId)?.hitFlash();
-        if (e is HugeWaveWarning && !overlays.isActive('hugeWave')) {
+        if (e is HugeWaveWarning) {
+          hugeWaveSeq++;
+          overlays.remove('hugeWave');
           overlays.add('hugeWave');
         }
       }
