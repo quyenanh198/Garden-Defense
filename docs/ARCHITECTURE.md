@@ -38,7 +38,7 @@ Chi tiết: `docs/superpowers/specs/2026-08-19-garden-defense-m1-m5-design.md`.
 
 ## Hệ tọa độ lưới (xương sống)
 
-- Lưới **5 hàng × 9 cột**. `GridBoard` là nơi duy nhất biết kích thước ô theo pixel.
+- Lưới campaign **5 hàng × 9 cột**; Endless desktop **10×20** (M8) — số hàng/cột là tham số của `GameState` và `GridBoard` (instance), không phải hằng cứng. `GridBoard` là nơi duy nhất biết kích thước ô theo pixel.
 - Mọi logic gameplay dùng `(row, col)`. Chuyển đổi:
   - `cellToPixel(row, col)` → tâm ô, dùng khi đặt plant / spawn sun.
   - `pixelToCell(x, y)` → ô, dùng khi xử lý tap.
@@ -72,17 +72,19 @@ lib/
 ├── data/
 │   ├── level_data.dart    # model + parser + validator JSON level (không Flutter)
 │   ├── level_loader.dart  # đọc assets/levels qua rootBundle
-│   └── progress_store.dart  # (M7)
+│   └── progress_store.dart  # highestUnlocked + endlessBest (shared_preferences)
 ├── core/                  # SIM CORE — thuần Dart, không Flame/Flutter, không pixel
 │   ├── game_state.dart    # GameState.tick(dt), lệnh từ UI, thắng/thua
 │   ├── entities.dart      # Plant, Zombie, Projectile, SunDrop
 │   ├── game_event.dart    # sealed GameEvent, PlantResult
-│   └── wave_spawner.dart
+│   ├── wave_spawner.dart  # interface Spawner + WaveSpawner (campaign)
+│   └── endless_spawner.dart  # sinh đợt vô hạn cho Endless (M8)
 ├── game/                  # VIEW — Flame
 │   ├── garden_game.dart   # FlameGame: tick state, sync, notifier cho HUD
 │   ├── grid_board.dart    # duy nhất biết cellToPixel / pixelToCell, nhận tap
 │   ├── sync_layer.dart    # đối chiếu state ↔ component
 │   ├── sprite_registry.dart  # manifest.json → Sprite/Animation hoặc null
+│   ├── sfx.dart           # SFX best-effort qua flame_audio (nuốt lỗi khi thiếu plugin)
 │   └── components/
 │       ├── plant_view.dart
 │       ├── zombie_view.dart
@@ -92,7 +94,7 @@ lib/
 └── ui/                    # Flutter widget overlay
     ├── theme.dart         # design system (màu, font, bo góc)
     ├── menu_screen.dart
-    ├── level_select_screen.dart  # (M7)
+    ├── level_select_screen.dart  # 10 ô, khóa theo ProgressStore
     ├── game_screen.dart   # GameWidget + overlayBuilderMap
     ├── widgets/clay_button.dart
     ├── hud/               # hud_bar.dart, plant_card.dart

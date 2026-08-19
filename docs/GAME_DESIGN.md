@@ -2,6 +2,40 @@
 
 Nguồn sự thật cho số liệu cân bằng. Khi code, mirror các số này vào `lib/config/balance.dart` — nếu hai nơi lệch nhau, docs thắng.
 
+## Tầm nhìn & trụ cột thiết kế
+
+Tower defense theo lưới, chơi một tay, mỗi trận 2–4 phút — "bảo vệ khu vườn" với nhịp thong thả nhưng quyết định có trọng lượng. Ba trụ cột, mọi tính năng mới phải phục vụ ít nhất một trụ và không phá trụ nào:
+
+1. **Đọc được tình huống trong 1 giây.** Nhìn sân là biết hàng nào nguy: zombie to dần theo độ trâu (walker → cone → bucket qua mũ), thanh máu chỉ hiện khi mất máu, banner báo huge wave trước 3s. Không hiệu ứng che khuất thông tin.
+2. **Mỗi quyết định là một bài toán kinh tế nhỏ.** Sun là tài nguyên duy nhất; người chơi liên tục chọn giữa đầu tư (sunflower), sát thương (peashooter/icepea), thời gian (wallnut). Chuẩn cân bằng: thu nhập ~5 sun/s ở giữa trận (sky 2.5 + 2–3 sunflower) → mỗi lần "mở hàng mới" (100 sun) là một nhịp quyết định ~15–20s; cone = tường + 1 cây bắn; bucket = tường + 2 cây bắn.
+3. **Leo thang công bằng, không RNG ám hại.** Campaign là kịch bản cố định trong JSON; Endless sinh theo seed, deterministic. Thua luôn truy ngược được về quyết định của người chơi, không phải về vận rủi.
+
+### Nhịp một trận (campaign)
+
+- **Mở màn (0–20s)**: sân trống, dựng kinh tế — không có zombie trước giây 20 ở mọi level.
+- **Giữa trận**: áp lực tăng theo hàng và theo loại zombie, mỗi lần chỉ thêm một thứ mới; khoảng nghỉ giữa các đợt đủ để tích sun cho một quyết định.
+- **Cao trào**: đợt cuối (huge wave từ level 6) dồn ép rồi kết thúc dứt khoát — thắng vì đã dựng đúng, không phải vì bấm nhanh.
+
+### Nguyên tắc UX
+
+- Một tap = một hành động; chọn thẻ rồi tap ô, không kéo-thả, không menu lồng nhau trong trận.
+- Mọi hành động bị từ chối phải nói lý do ngay (nháy ví khi thiếu sun, thẻ mờ khi cooldown).
+- Hành động tối thiểu từ mở app tới vào trận: 2 tap (menu → level).
+- Pause dừng tất cả và không mất gì; thoát giữa trận không phạt.
+
+### Phong cách nghe nhìn
+
+- **Hình**: claymorphism nhẹ — mảng màu phẳng, viền ink `#0F172A`, bo góc lớn, bóng đổ cứng; palette xanh cỏ + vàng nắng (xem `lib/ui/theme.dart`). Sprite theo cùng ngôn ngữ: flat + viền, đọc được ở kích thước ô nhỏ (Endless 10×20).
+- **Chữ**: Fredoka (heading, số) + Nunito (body), đều OFL.
+- **Âm** (M7): hiệu ứng ngắn < 0.4s, không nhạc nền ở MVP. Mỗi sự kiện một tiếng đặc trưng, không chồng chéo ồn ào; tắt được về sau. Bảng sự kiện → âm: trồng cây (bốp), đạn trúng (tách), thu sun (leng), nâng cấp (ting), huge wave (trầm), thắng (fanfare ngắn), thua (trầm xuống).
+
+## Tiến độ & mở khóa (M7)
+
+- Level chơi tuần tự: thắng level N mở level N+1. Level 1 và Endless luôn mở.
+- Lưu bằng `shared_preferences`, hai khóa: `highestUnlocked` (int, mặc định 1, chỉ tăng) và `endlessBest` (int, số đợt sống sót cao nhất, chỉ tăng).
+- Màn chọn level: lưới 10 ô, ô khóa hiện biểu tượng khóa và không bấm được; menu hiện kỷ lục Endless nếu > 0.
+- Không có sao/điểm ở MVP — thắng/chưa thắng là đủ.
+
 ## Vòng lặp cốt lõi
 
 Thu sun → trồng plant → chặn/diệt zombie → sống sót hết wave → thắng level → mở level kế.

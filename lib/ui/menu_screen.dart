@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 
 import '../config/balance.dart';
 import '../core/game_state.dart';
-import '../data/level_loader.dart';
+import '../data/progress_store.dart';
 import 'game_screen.dart';
+import 'level_select_screen.dart';
 import 'theme.dart';
 import 'widgets/clay_button.dart';
 
-/// Menu tối giản cho M5. Chọn level + unlock làm ở M7.
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
 
@@ -17,25 +17,37 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  // Chặn tap lặp: _play có await trước khi push nên tap đúp sẽ push 2 lần.
+  // Chặn tap lặp: các handler có await trước khi push.
   bool _launching = false;
+  ProgressStore? _store;
 
-  Future<void> _play() async {
-    if (_launching) return;
+  @override
+  void initState() {
+    super.initState();
+    ProgressStore.load().then((s) {
+      if (mounted) setState(() => _store = s);
+    });
+  }
+
+  Future<void> _openLevelSelect() async {
+    final store = _store;
+    if (_launching || store == null) return;
     _launching = true;
     try {
-      final level = await LevelLoader.load(1);
-      if (!mounted) return;
       await Navigator.of(context).push(
-        MaterialPageRoute<void>(builder: (_) => GameScreen(level: level)),
+        MaterialPageRoute<void>(
+          builder: (_) => LevelSelectScreen(store: store),
+        ),
       );
+      if (mounted) setState(() {}); // refresh kỷ lục/tiến độ
     } finally {
       _launching = false;
     }
   }
 
   Future<void> _playEndless() async {
-    if (_launching) return;
+    final store = _store;
+    if (_launching || store == null) return;
     _launching = true;
     try {
       // Desktop: lưới 10×20; Android giữ 5×9 (docs/GAME_DESIGN.md).
@@ -49,9 +61,11 @@ class _MenuScreenState extends State<MenuScreen> {
             rows: desktop ? Balance.endlessRowsDesktop : Balance.rows,
             cols: desktop ? Balance.endlessColsDesktop : Balance.cols,
             endless: true,
+            onEndlessEnd: store.recordEndless,
           ),
         ),
       );
+      if (mounted) setState(() {});
     } finally {
       _launching = false;
     }
@@ -59,6 +73,7 @@ class _MenuScreenState extends State<MenuScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final best = _store?.endlessBest ?? 0;
     return Scaffold(
       backgroundColor: GdColors.menuBg,
       body: Center(
@@ -74,15 +89,25 @@ class _MenuScreenState extends State<MenuScreen> {
             ),
             const SizedBox(height: 32),
             ClayButton(
-              label: 'Chơi level 1',
+              label: 'Chơi',
               primary: true,
-              onTap: _play,
+              onTap: _openLevelSelect,
             ),
             const SizedBox(height: 16),
             ClayButton(
               label: 'Endless',
               onTap: _playEndless,
             ),
+            if (best > 0) ...[
+              const SizedBox(height: 12),
+              Text(
+                'Kỷ lục Endless: $best đợt',
+                style: GdText.body.copyWith(
+                  fontSize: 16,
+                  color: GdColors.primaryDark,
+                ),
+              ),
+            ],
           ],
         ),
       ),

@@ -10,6 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
   flame: ^1.35.1
+  # ROADMAP M7 yêu cầu: SFX qua Flame, không tự viết wrapper audioplayers.
+  flame_audio: ^2.11.0
   shared_preferences: ^2.3.0
 
 dev_dependencies:
@@ -22,14 +24,14 @@ flutter:
   assets:
     - assets/levels/
     - assets/images/
-  # Bỏ comment khi đã có file TTF trong assets/fonts/ (xem assets/fonts/README.md)
-  # fonts:
-  #   - family: Fredoka
-  #     fonts:
-  #       - asset: assets/fonts/Fredoka-Bold.ttf
-  #         weight: 700
-  #   - family: Nunito
-  #     fonts:
-  #       - asset: assets/fonts/Nunito-Regular.ttf
-  #       - asset: assets/fonts/Nunito-Bold.ttf
-  #         weight: 700
+    - assets/audio/
+  fonts:
+    - family: Fredoka
+      fonts:
+        - asset: assets/fonts/Fredoka-Bold.ttf
+          weight: 700
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/Nunito-Regular.ttf
+        - asset: assets/fonts/Nunito-Bold.ttf
+          weight: 700
