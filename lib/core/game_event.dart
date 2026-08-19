@@ -4,7 +4,8 @@ enum PlantResult {
   occupied,
   notEnoughSun,
   onCooldown,
-  notAvailable
+  notAvailable,
+  notPlaying,
 }
 
 sealed class GameEvent {

@@ -62,6 +62,34 @@ void main() {
     expect(row1.hp, 200);
     expect(row2.hp, lessThan(200));
   });
+  test('fire cadence is exactly fireInterval while a target is present', () {
+    final g = newGame(
+      lvl: level(waves: const [WaveEntry(time: 0, zombie: 'bucket', row: 2)]),
+    );
+    g.selectPlant('peashooter');
+    g.tapCell(2, 0);
+    var spawned = 0;
+    var seen = <int>{};
+    for (var i = 0; i < 100; i++) {
+      run(g, 0.05);
+      for (final p in g.projectiles) {
+        if (seen.add(p.id)) spawned++;
+      }
+    }
+    // 5 s: bắn tại t≈0, 1.4, 2.8, 4.2
+    expect(spawned, 4);
+  });
+  test('commands are ignored when game is not playing', () {
+    final g = newGame(lvl: level(startingSun: 500));
+    g.pause();
+    g.selectPlant('wallnut');
+    expect(g.tapCell(0, 0), PlantResult.notPlaying);
+    expect(g.plants, isEmpty);
+    g.resume();
+    run(g, 9 * 4.7 + 1); // thua
+    expect(g.tapCell(0, 1), PlantResult.notPlaying);
+    expect(g.collectSun(1), isFalse);
+  });
   test('pea hits the front-most zombie only', () {
     final g = newGame(
       lvl: level(

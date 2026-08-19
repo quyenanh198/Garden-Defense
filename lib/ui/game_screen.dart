@@ -35,9 +35,11 @@ class _GameScreenState extends State<GameScreen> {
   void _pause() {
     game.state.pause();
     game.overlays.add('pause');
+    game.pauseEngine();
   }
 
   void _resume() {
+    game.resumeEngine();
     game.overlays.remove('pause');
     game.state.resume();
   }

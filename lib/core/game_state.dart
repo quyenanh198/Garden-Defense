@@ -56,6 +56,7 @@ class GameState {
   }
 
   PlantResult tapCell(int row, int col) {
+    if (phase != GamePhase.playing) return PlantResult.notPlaying;
     final result = _tryPlant(row, col);
     if (result != PlantResult.ok) _events.add(PlantRejected(result));
     return result;
@@ -81,6 +82,7 @@ class GameState {
   }
 
   bool collectSun(int sunId) {
+    if (phase != GamePhase.playing) return false;
     final i = suns.indexWhere((s) => s.id == sunId);
     if (i < 0) return false;
     final s = suns.removeAt(i);
@@ -143,11 +145,14 @@ class GameState {
           final hasTarget = zombies.any(
             (z) => z.isAlive && z.row == p.row && z.col > p.col,
           );
-          if (!hasTarget) {
-            p.actionTimer = Balance.fireInterval; // bắn ngay khi có mục tiêu
-            break;
-          }
+          // Nạp đạn cả khi không có mục tiêu (tối đa 1 phát sẵn sàng):
+          // có mục tiêu thì bắn ngay, nhưng nhịp giữa hai phát không bao giờ
+          // nhanh hơn fireInterval dù mục tiêu vào/ra tầm liên tục.
           p.actionTimer += dt;
+          if (p.actionTimer > Balance.fireInterval) {
+            p.actionTimer = Balance.fireInterval;
+          }
+          if (!hasTarget) break;
           if (p.actionTimer >= Balance.fireInterval) {
             p.actionTimer -= Balance.fireInterval;
             projectiles.add(

@@ -4,7 +4,7 @@ Cập nhật: 2026-08-19 — sau M5 (vertical slice hoàn tất)
 
 ## Trạng thái
 - Milestone xong: **M1–M5** theo `docs/ROADMAP.md`. Verify tay trên Windows desktop bằng screenshot tự động: lưới + tap, zombie đi/ăn/thua, đạn + trừ máu đúng hàng, sun rơi/thu, HUD thẻ plant (chọn / thiếu sun / cooldown), pause, chơi trọn level 1 → banner "Đợt tấn công lớn!" ở ~107 s → Thắng → "Tiếp tục" về menu.
-- `flutter analyze`: sạch · `flutter test`: 33 pass (balance, level parser/validator, core M2–M5).
+- `flutter analyze`: sạch · `flutter test`: 35 pass (balance, level parser/validator, core M2–M5).
 - Nhánh: `feat/m1-m5-vertical-slice` → merge vào `main`.
 - Asset: chưa có sprite/font (placeholder vẽ bằng code). Hướng dẫn: `docs/ASSETS.md`, `assets/fonts/README.md`.
 
@@ -23,6 +23,7 @@ flutter test
 - Flame ghim `^1.35.1` (Flutter 3.32.1 / Dart 3.8.1). Nâng Flutter ≥ 3.41 để dùng ^1.38.
 - Cây bắn (peashooter/icepea) bắn ngay phát đầu khi có mục tiêu (actionTimer khởi tạo = fireInterval).
 - Thẻ plant vẫn được chọn sau khi tap ô bị từ chối (giống PvZ); bỏ chọn sau khi trồng thành công.
+- Sau code review: engine Flame `pauseEngine()` khi tạm dừng; `tapCell/collectSun` bị chặn khi không `playing` (`PlantResult.notPlaying`); cây bắn nạp đạn cả khi không có mục tiêu (nhịp ≥ 1.4 s kể cả mục tiêu vào/ra tầm). Chưa làm: dispose `ValueNotifier` trong `GardenGame` (dispose trước khi HudBar gỡ listener sẽ assert; để GC).
 - Plan đã thực thi: `docs/superpowers/plans/2026-08-19-garden-defense-m1-m5.md`.
 
 ## Việc kế tiếp (M6–M7, cần spec/plan riêng)

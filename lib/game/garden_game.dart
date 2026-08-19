@@ -46,6 +46,9 @@ class GardenGame extends FlameGame {
   @override
   void update(double dt) {
     super.update(dt);
+    // Engine bị pause khi tạm dừng (GameScreen); khi thắng/thua overlay hiện
+    // và không còn gì để sync — tránh rebuild HUD vô ích.
+    if (state.phase == GamePhase.won || state.phase == GamePhase.lost) return;
     state.tick(dt);
     _sync.sync();
     final evs = state.takeEvents();
