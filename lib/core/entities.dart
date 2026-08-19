@@ -8,13 +8,18 @@ class Plant {
     required this.spec,
     required this.row,
     required this.col,
-  }) : hp = spec.hp;
+  })  : hp = spec.hp,
+        // cây bắn: sẵn sàng bắn ngay phát đầu; cây sinh sun: đếm từ 0
+        actionTimer = (spec.action == PlantAction.shoot ||
+                spec.action == PlantAction.shootIce)
+            ? Balance.fireInterval
+            : 0;
   final int id;
   final PlantSpec spec;
   final int row;
   final int col;
   double hp;
-  double actionTimer = 0; // đếm tới lần hành động kế
+  double actionTimer; // đếm tới lần hành động kế
 }
 
 class Zombie {
