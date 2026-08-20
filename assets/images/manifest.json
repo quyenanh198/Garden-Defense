@@ -28,8 +28,26 @@
     "cone": {
       "file": "cone.png"
     },
+    "cone_walk": {
+      "file": "cone_walk.png",
+      "frameSize": [
+        96,
+        128
+      ],
+      "frames": 6,
+      "stepTime": 0.12
+    },
     "bucket": {
       "file": "bucket.png"
+    },
+    "bucket_walk": {
+      "file": "bucket_walk.png",
+      "frameSize": [
+        96,
+        128
+      ],
+      "frames": 6,
+      "stepTime": 0.12
     },
     "pea": {
       "file": "pea.png"

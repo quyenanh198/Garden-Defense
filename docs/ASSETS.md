@@ -40,6 +40,21 @@ ID cần có: `sunflower`, `peashooter`, `wallnut`, `icepea`, `walker`, `cone`, 
 | Đạn, sun, hạt | Kenney — *Particle Pack* https://kenney.nl/assets/particle-pack | Hình tròn/ngôi sao tô màu lại. |
 | Tìm thêm | OpenGameArt lọc CC0: https://opengameart.org/content/all-cc0-uploader-kenney · https://opengameart.org/content/good-cc0-art | |
 
+### Nguồn bổ sung (tra cứu 2026-08-19 — kiểm tra license từng trang trước khi dùng)
+
+| Nhu cầu | Nguồn | License | Ghi chú |
+|---|---|---|---|
+| Zombie có anim đi bộ | OpenGameArt — "Zombie RPG sprites" https://opengameart.org/content/zombie-rpg-sprites | CC0 | sheet đi bộ nhiều hướng, cần scale về 96×128 |
+| Zombie sprite sheet | OpenGameArt — "The Zombie - Free Sprites" https://opengameart.org/content/the-zombie-free-sprites | xem trang | kiểm tra license trước khi dùng |
+| Nhân vật vector module hóa | OpenGameArt — "Free CC0 Modular Animated Vector Characters 2D" https://opengameart.org/content/free-cc0-modular-animated-vector-characters-2d | CC0 | ghép bộ phận, dễ chế cone/bucket |
+| Tổng hợp CC0 | OpenGameArt — CC0 resources https://opengameart.org/content/cc0-resources | CC0 | danh mục lớn do cộng đồng lọc |
+| Zombie chất lượng cao | CraftPix freebies https://craftpix.net/freebies/2d-game-zombie-character-free-sprite-pack-1/ | license riêng của CraftPix | miễn phí nhưng KHÔNG phải CC0 — đọc kỹ điều khoản |
+| Bộ đầy đủ đủ thể loại | Kenney All-in-1 https://kenney.nl/ (Toon Characters, Tower Defense, Particle Pack, UI Pack) | CC0 | 30.000+ asset, an toàn nhất về license |
+
+**Âm thanh** (thay file WAV cùng tên trong `assets/audio/`): freesound.org (lọc license CC0), Kenney *Audio* packs (CC0), hoặc tự sinh bằng jsfxr/sfxr. Tránh nguồn "royalty-free" không ghi rõ license.
+
+**Lưu ý khi tải trong Claude Code Remote**: proxy của môi trường remote chặn kenney.nl / opengameart.org / itch.io / craftpix.net — các link trên dành cho máy dev. Sprite + animation hiện tại trong repo là bản vẽ gốc bằng script (xem `assets/CREDITS.md`), ghi đè file cùng tên là thay được.
+
 Quy trình: chọn pack → tải zip → cắt/đổi tên file theo ID → đặt vào `assets/images/` → cập nhật `manifest.json` + `CREDITS.md` → `flutter run -d windows` kiểm tra.
 
 ## Font (OFL)
