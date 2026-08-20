@@ -2,7 +2,7 @@
   "id": 1,
   "name": "Bãi cỏ đầu tiên",
   "startingSun": 150,
-  "availablePlants": ["peashooter"],
+  "availablePlants": ["peashooter", "sunflower"],
   "skySuns": true,
   "waves": [
     { "time": 20, "zombie": "walker", "row": 2 },

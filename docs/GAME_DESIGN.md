@@ -79,8 +79,8 @@ Quy tắc: chỉ bắn khi có mục tiêu cùng hàng (tiết kiệm tính toá
 
 | Level | Dạy người chơi | Nội dung mới |
 |---|---|---|
-| 1 | Trồng + bắn | chỉ peashooter, 1 hàng zombie |
-| 2 | Kinh tế sun | mở sunflower |
+| 1 | Trồng + bắn + kinh tế | peashooter + sunflower, 1 hàng zombie |
+| 2 | Kinh tế sun | luyện nhịp sunflower, nhiều hàng hơn |
 | 3 | Phòng thủ | mở wallnut |
 | 4 | Áp lực nhiều hàng | zombie 3 hàng |
 | 5 | Zombie trâu | xuất hiện cone |

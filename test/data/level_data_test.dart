@@ -22,7 +22,7 @@ void main() {
     );
     expect(level.id, 1);
     expect(level.startingSun, 150);
-    expect(level.availablePlants, ['peashooter']);
+    expect(level.availablePlants, ['peashooter', 'sunflower']);
     expect(level.skySuns, isTrue);
     expect(level.waves.length, 6);
     expect(level.waves.last.time, 112);
