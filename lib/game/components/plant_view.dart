@@ -14,8 +14,11 @@ class PlantView extends PositionComponent {
           anchor: Anchor.center,
         ) {
     position = board.cellToPixel(plant.row, plant.col.toDouble());
+    final anim = sprites.animation('${plant.spec.id}_idle');
     final s = sprites.sprite(plant.spec.id);
-    if (s != null) {
+    if (anim != null) {
+      add(SpriteAnimationComponent(animation: anim, size: size));
+    } else if (s != null) {
       add(SpriteComponent(sprite: s, size: size));
     } else {
       _placeholder = PlaceholderPainter(

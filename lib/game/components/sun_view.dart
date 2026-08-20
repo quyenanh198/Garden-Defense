@@ -12,9 +12,14 @@ import '../sprite_registry.dart';
 class SunView extends PositionComponent with TapCallbacks {
   SunView(this.sun, SpriteRegistry sprites, this.onCollect, GridBoard board)
       : super(size: Vector2.all(64), anchor: Anchor.center) {
+    final anim = sprites.animation('sun_idle');
     final s = sprites.sprite('sun');
-    if (s != null) add(SpriteComponent(sprite: s, size: size));
-    _hasSprite = s != null;
+    if (anim != null) {
+      add(SpriteAnimationComponent(animation: anim, size: size));
+    } else if (s != null) {
+      add(SpriteComponent(sprite: s, size: size));
+    }
+    _hasSprite = anim != null || s != null;
     priority = 100; // trên mọi thứ để bắt tap trước lưới
     _target = board.cellToPixel(sun.row, sun.col);
     position = Vector2(_target.x, GridBoard.originY - 40);

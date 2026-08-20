@@ -57,6 +57,69 @@
     },
     "sun": {
       "file": "sun.png"
+    },
+    "peashooter_idle": {
+      "file": "peashooter_idle.png",
+      "frameSize": [
+        128,
+        128
+      ],
+      "frames": 2,
+      "stepTime": 0.35
+    },
+    "icepea_idle": {
+      "file": "icepea_idle.png",
+      "frameSize": [
+        128,
+        128
+      ],
+      "frames": 2,
+      "stepTime": 0.35
+    },
+    "sunflower_idle": {
+      "file": "sunflower_idle.png",
+      "frameSize": [
+        128,
+        128
+      ],
+      "frames": 4,
+      "stepTime": 0.3
+    },
+    "wallnut_idle": {
+      "file": "wallnut_idle.png",
+      "frameSize": [
+        128,
+        128
+      ],
+      "frames": 4,
+      "stepTime": 0.3
+    },
+    "sun_idle": {
+      "file": "sun_idle.png",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": 6,
+      "stepTime": 0.12
+    },
+    "pea_idle": {
+      "file": "pea_idle.png",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": 4,
+      "stepTime": 0.08
+    },
+    "icepea_shot_idle": {
+      "file": "icepea_shot_idle.png",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": 4,
+      "stepTime": 0.08
     }
   }
 }

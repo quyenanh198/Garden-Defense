@@ -14,7 +14,11 @@ void main() {
     ]) {
       expect(r.sprite(id), isNotNull, reason: 'thiếu sprite $id');
     }
-    for (final id in ['walker_walk', 'cone_walk', 'bucket_walk']) {
+    for (final id in [
+      'walker_walk', 'cone_walk', 'bucket_walk',
+      'peashooter_idle', 'icepea_idle', 'sunflower_idle', 'wallnut_idle',
+      'sun_idle', 'pea_idle', 'icepea_shot_idle',
+    ]) {
       expect(r.animation(id), isNotNull, reason: 'thiếu animation $id');
     }
   });

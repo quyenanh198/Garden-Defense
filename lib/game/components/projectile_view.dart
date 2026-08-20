@@ -9,9 +9,15 @@ import '../sprite_registry.dart';
 class ProjectileView extends PositionComponent {
   ProjectileView(this.projectile, SpriteRegistry sprites, this.board)
       : super(size: Vector2.all(24), anchor: Anchor.center) {
-    final s = sprites.sprite(projectile.slows ? 'icepea_shot' : 'pea');
-    if (s != null) add(SpriteComponent(sprite: s, size: size));
-    _hasSprite = s != null;
+    final id = projectile.slows ? 'icepea_shot' : 'pea';
+    final anim = sprites.animation('${id}_idle');
+    final s = sprites.sprite(id);
+    if (anim != null) {
+      add(SpriteAnimationComponent(animation: anim, size: size));
+    } else if (s != null) {
+      add(SpriteComponent(sprite: s, size: size));
+    }
+    _hasSprite = anim != null || s != null;
     _paint = Paint()
       ..color =
           projectile.slows ? const Color(0xFF38BDF8) : const Color(0xFF22C55E);
