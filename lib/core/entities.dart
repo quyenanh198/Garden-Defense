@@ -65,10 +65,14 @@ class SunDrop {
     required this.row,
     required this.col,
     required this.value,
+    this.fromCol,
   });
   final int id;
   final int row;
   final double col;
   final int value;
+
+  /// Cột của sunflower sinh ra sun này (null = sun trời).
+  final double? fromCol;
   double age = 0;
 }

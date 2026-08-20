@@ -55,6 +55,12 @@ class GardenGame extends FlameGame {
     camera.viewfinder.anchor = Anchor.topLeft;
     camera.viewfinder.position = Vector2.zero();
     await sprites.load();
+    final bg = sprites.sprite('background');
+    if (bg != null) {
+      world.add(
+        SpriteComponent(sprite: bg, size: Vector2(1280, 720), priority: -10),
+      );
+    }
     board = GridBoard(rows: state.rows, cols: state.cols)
       ..onCellTap = (r, c) => state.tapCell(r, c);
     world.add(board);

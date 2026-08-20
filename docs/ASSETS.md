@@ -27,7 +27,7 @@ Game chạy được **không cần asset nào**: thiếu sprite thì `SpriteReg
 
 `file` là đường dẫn tương đối trong `assets/images/` (Flame `Flame.images.load`). Quy ước animation: zombie ưu tiên `<id>_walk`; cây/đạn/sun ưu tiên `<id>_idle`; không có animation thì dùng `<id>` tĩnh; không có nữa thì placeholder.
 
-ID cần có: `sunflower`, `peashooter`, `wallnut`, `icepea`, `walker`, `cone`, `bucket`, `pea`, `icepea_shot`, `sun` (+ tùy chọn `<zombie>_walk` và `<id>_idle` cho cây/đạn/sun).
+ID cần có: `sunflower`, `peashooter`, `wallnut`, `icepea`, `walker`, `cone`, `bucket`, `pea`, `icepea_shot`, `sun` (+ tùy chọn `<zombie>_walk`, `<id>_idle` cho cây/đạn/sun, và `background` 1280×720 phủ toàn khung — lưới vẽ đè vùng 200,100→1240,700).
 
 ## Nguồn gợi ý (CC0) — xác minh nội dung khi tải
 

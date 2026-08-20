@@ -188,10 +188,14 @@ class GameState {
           p.actionTimer += dt;
           if (p.actionTimer >= Balance.sunflowerInterval) {
             p.actionTimer -= Balance.sunflowerInterval;
+            // Sun rơi ngay cạnh cây (docs/GAME_DESIGN.md); sát mép phải thì
+            // rơi sang trái.
+            final beside = p.col + 1 < cols ? p.col + 1 : p.col - 1;
             _spawnSun(
               p.row,
-              p.col.toDouble(),
+              beside.toDouble(),
               Balance.sunflowerValue * (p.upgraded ? Balance.upgradeFactor : 1),
+              fromCol: p.col.toDouble(),
             );
           }
         case PlantAction.shoot:
@@ -308,8 +312,14 @@ class GameState {
     }
   }
 
-  void _spawnSun(int row, double col, int value) {
-    final s = SunDrop(id: _nextId++, row: row, col: col, value: value);
+  void _spawnSun(int row, double col, int value, {double? fromCol}) {
+    final s = SunDrop(
+      id: _nextId++,
+      row: row,
+      col: col,
+      value: value,
+      fromCol: fromCol,
+    );
     suns.add(s);
     _events.add(SunSpawned(s.id));
   }

@@ -42,7 +42,9 @@ Spec đầy đủ trong `docs/GAME_DESIGN.md` (mục "Chế độ Endless"), ti�
 
 - **Idle animation cho cây/đạn/sun**: quy ước mới `<id>_idle` (views ưu tiên animation → sprite tĩnh → placeholder, như `_walk` của zombie; ghi trong ASSETS.md). peashooter/icepea dùng pack CC0 "Plant Monster" (Bevouliin/OGA, lật hướng bắn, icepea đổi hue băng); sunflower lắc / wallnut thở sinh từ art gốc; sun tia xoay 6 frame; đạn 4 frame điểm sáng xoay. `sprite_registry_test` phủ đủ 10 animation.
 
-Sau toàn bộ session: `flutter analyze` sạch · `flutter test` 79 pass.
+- **Background + sun cạnh hoa**: id asset tùy chọn `background` (1280×720, GardenGame vẽ dưới lưới priority −10; bản hiện tại vẽ gốc: trời/mây, cỏ, hàng rào trái, đường đất + bia mộ phải). Sun của sunflower giờ spawn ở **ô cạnh hoa** (docs vốn ghi "rơi ngay cạnh cây" — code cũ lệch docs), `SunDrop.fromCol` ghi nguồn; view cho sun bật vồng parabol 0.6s từ hoa sang ô cạnh, sun trời giữ kiểu rơi từ mép trên. Test core 3 ca (cạnh phải, sát mép phải rơi trái, sun trời fromCol null).
+
+Sau toàn bộ session: `flutter analyze` sạch · `flutter test` 82 pass.
 
 **PlantCard overflow (finding phát sinh) — đã fix:** dòng "thiếu sun" giờ là 1 dòng trong `FittedBox` co giãn (`lib/ui/hud/plant_card.dart`), có widget test tái hiện (`test/ui/plant_card_test.dart`).
 

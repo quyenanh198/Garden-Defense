@@ -39,6 +39,31 @@ void main() {
     expect(far.hp, Balance.zombies['walker']!.hp);
   });
 
+  test('sunflower sun drops beside the flower with its source recorded', () {
+    final g = newGame(lvl: level(startingSun: 50, waves: _far));
+    g.selectPlant('sunflower');
+    g.tapCell(1, 1);
+    run(g, Balance.sunflowerInterval + 0.2);
+    final s = g.suns.single;
+    expect(s.row, 1);
+    expect(s.col, 2); // ô bên phải hoa (docs: "rơi ngay cạnh cây")
+    expect(s.fromCol, 1);
+  });
+
+  test('sunflower at the right edge drops sun to its left', () {
+    final g = newGame(lvl: level(startingSun: 50, waves: _far));
+    g.selectPlant('sunflower');
+    g.tapCell(1, 8);
+    run(g, Balance.sunflowerInterval + 0.2);
+    expect(g.suns.single.col, 7);
+  });
+
+  test('sky sun has no source flower', () {
+    final g = newGame(lvl: level(skySuns: true, waves: _far));
+    run(g, 10.05);
+    expect(g.suns.single.fromCol, isNull);
+  });
+
   test('zombie spawn column derives from Balance.cols', () {
     final z = Zombie(id: 1, spec: Balance.zombies['walker']!, row: 0);
     expect(z.col, Balance.cols.toDouble());

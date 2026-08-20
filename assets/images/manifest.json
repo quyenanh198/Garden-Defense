@@ -120,6 +120,9 @@
       ],
       "frames": 4,
       "stepTime": 0.08
+    },
+    "background": {
+      "file": "background.png"
     }
   }
 }

@@ -22,12 +22,17 @@ class SunView extends PositionComponent with TapCallbacks {
     _hasSprite = anim != null || s != null;
     priority = 100; // trên mọi thứ để bắt tap trước lưới
     _target = board.cellToPixel(sun.row, sun.col);
-    position = Vector2(_target.x, GridBoard.originY - 40);
+    // Sun từ sunflower bật ra từ hoa; sun trời rơi từ mép trên.
+    _from = sun.fromCol == null
+        ? null
+        : board.cellToPixel(sun.row, sun.fromCol!) - Vector2(0, 24);
+    position = _from ?? Vector2(_target.x, GridBoard.originY - 40);
   }
 
   final SunDrop sun;
   final void Function(int sunId) onCollect;
   late final Vector2 _target;
+  late final Vector2? _from;
   late final bool _hasSprite;
   final _fill = Paint()..color = const Color(0xFFFBBF24);
   final _ring = Paint()
@@ -36,11 +41,20 @@ class SunView extends PositionComponent with TapCallbacks {
     ..strokeWidth = 4;
 
   void syncFromState() {
-    final t = (sun.age / 1.0).clamp(0.0, 1.0);
-    position = Vector2(
-      _target.x,
-      lerpDouble(GridBoard.originY - 40, _target.y, t)!,
-    );
+    if (_from != null) {
+      // Vồng parabol ngắn từ hoa sang ô cạnh.
+      final t = (sun.age / 0.6).clamp(0.0, 1.0);
+      position = Vector2(
+        lerpDouble(_from.x, _target.x, t)!,
+        lerpDouble(_from.y, _target.y, t)! - 36 * 4 * t * (1 - t),
+      );
+    } else {
+      final t = (sun.age / 1.0).clamp(0.0, 1.0);
+      position = Vector2(
+        _target.x,
+        lerpDouble(GridBoard.originY - 40, _target.y, t)!,
+      );
+    }
     final left = Balance.sunLifetime - sun.age;
     if (left < 2) {
       final blink = (sin(left * 12) + 1) / 2;

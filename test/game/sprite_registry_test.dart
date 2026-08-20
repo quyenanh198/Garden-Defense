@@ -10,7 +10,7 @@ void main() {
     await r.load();
     for (final id in [
       'sunflower', 'peashooter', 'wallnut', 'icepea',
-      'walker', 'cone', 'bucket', 'pea', 'icepea_shot', 'sun',
+      'walker', 'cone', 'bucket', 'pea', 'icepea_shot', 'sun', 'background',
     ]) {
       expect(r.sprite(id), isNotNull, reason: 'thiếu sprite $id');
     }
