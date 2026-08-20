@@ -22,8 +22,8 @@
         96,
         128
       ],
-      "frames": 6,
-      "stepTime": 0.12
+      "frames": 10,
+      "stepTime": 0.1
     },
     "cone": {
       "file": "cone.png"
@@ -34,8 +34,8 @@
         96,
         128
       ],
-      "frames": 6,
-      "stepTime": 0.12
+      "frames": 10,
+      "stepTime": 0.1
     },
     "bucket": {
       "file": "bucket.png"
@@ -46,8 +46,8 @@
         96,
         128
       ],
-      "frames": 6,
-      "stepTime": 0.12
+      "frames": 10,
+      "stepTime": 0.1
     },
     "pea": {
       "file": "pea.png"

@@ -37,6 +37,9 @@ Spec đầy đủ trong `docs/GAME_DESIGN.md` (mục "Chế độ Endless"), ti�
 
 - **Animation đi bộ**: 3 sheet vẽ gốc `walker/cone/bucket_walk.png` (6 frame 96×128, chân so le + bàn chân + tay vung + thân nhún), manifest đã khai báo — `ZombieView` tự ưu tiên anim, không sửa Dart. `test/game/sprite_registry_test.dart` load manifest + asset THẬT (không mock) xác nhận đủ 10 sprite + 3 animation. `docs/ASSETS.md` bổ sung bảng nguồn miễn phí đã tra cứu (OpenGameArt CC0, Kenney, CraftPix — kèm cảnh báo license và ghi chú các trang này bị proxy remote chặn, tải trên máy dev).
 
+- **Asset zombie nâng cấp từ pack CC0 thật**: sau khi network policy mở, tải "The Zombie - Free Sprites" (OpenGameArt, CC0) — walker=male, cone=male+nón vẽ đè, bucket=female+xô vẽ đè; lật hướng trái, scale 96×128, sheet 10 frame + sprite tĩnh đồng bộ; CREDITS.md cập nhật. Cây/đạn/sun vẫn là bộ vẽ gốc.
+- **Build release trong container thành công**: `app-release.apk` 21.1MB (đã verify manifest asset mới nằm trong APK) và Linux desktop bundle 49MB (thêm platform `linux/` vào repo; cần libgtk-3-dev + gstreamer dev để build). Lưu ý cmake: nếu lần configure đầu fail, xóa `build/linux` trước khi build lại (cache CMAKE_INSTALL_PREFIX sai làm bundle rơi vào /usr/local). **Windows build phải chạy trên máy Windows** (`flutter build windows`) — Flutter không cross-compile.
+
 Sau toàn bộ session: `flutter analyze` sạch · `flutter test` 79 pass.
 
 **PlantCard overflow (finding phát sinh) — đã fix:** dòng "thiếu sun" giờ là 1 dòng trong `FittedBox` co giãn (`lib/ui/hud/plant_card.dart`), có widget test tái hiện (`test/ui/plant_card_test.dart`).
