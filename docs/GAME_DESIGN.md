@@ -7,7 +7,7 @@ Nguồn sự thật cho số liệu cân bằng. Khi code, mirror các số này
 Tower defense theo lưới, chơi một tay, mỗi trận 2–4 phút — "bảo vệ khu vườn" với nhịp thong thả nhưng quyết định có trọng lượng. Ba trụ cột, mọi tính năng mới phải phục vụ ít nhất một trụ và không phá trụ nào:
 
 1. **Đọc được tình huống trong 1 giây.** Nhìn sân là biết hàng nào nguy: zombie to dần theo độ trâu (walker → cone → bucket qua mũ), thanh máu chỉ hiện khi mất máu, banner báo huge wave trước 3s. Không hiệu ứng che khuất thông tin.
-2. **Mỗi quyết định là một bài toán kinh tế nhỏ.** Sun là tài nguyên duy nhất; người chơi liên tục chọn giữa đầu tư (sunflower), sát thương (peashooter/icepea), thời gian (wallnut). Chuẩn cân bằng: thu nhập ~5 sun/s ở giữa trận (sky 2.5 + 2–3 sunflower) → mỗi lần "mở hàng mới" (100 sun) là một nhịp quyết định ~15–20s; cone = tường + 1 cây bắn; bucket = tường + 2 cây bắn.
+2. **Mỗi quyết định là một bài toán kinh tế nhỏ.** Sun là tài nguyên duy nhất; người chơi liên tục chọn giữa đầu tư (sunflower), sát thương (peashooter/icepea), thời gian (wallnut). Chuẩn cân bằng: thu nhập ~5–6 sun/s ở giữa trận (sky 2.5 + 2 sunflower ~3.3) → mỗi lần "mở hàng mới" (100 sun) là một nhịp quyết định ~15–20s; cone = tường + 1 cây bắn; bucket = tường + 2 cây bắn.
 3. **Leo thang công bằng, không RNG ám hại.** Campaign là kịch bản cố định trong JSON; Endless sinh theo seed, deterministic. Thua luôn truy ngược được về quyết định của người chơi, không phải về vận rủi.
 
 ### Nhịp một trận (campaign)
@@ -45,15 +45,15 @@ Thu sun → trồng plant → chặn/diệt zombie → sống sót hết wave �
 | Thông số | Giá trị | Ghi chú |
 |---|---|---|
 | Sun khởi đầu | theo level (JSON) | mặc định 50 |
-| Sun từ trời | 25 sun / ~10 giây | rơi vị trí ngẫu nhiên, tồn tại 8s rồi biến mất |
-| Sun từ hoa mặt trời | 25 sun / 24 giây | rơi ngay cạnh cây |
+| Sun từ trời | 25 sun / ~10 giây | rơi lần đầu ở giây 5, vị trí ngẫu nhiên, tồn tại 8s rồi biến mất |
+| Sun từ hoa mặt trời | 25 sun / 15 giây | rơi ngay cạnh cây |
 | Giá trị 1 sun tap | +25 vào ví | tap để thu |
 
 ## Plants (4 loại MVP)
 
 | ID | Tên | Giá (sun) | HP | Hành động | Cooldown trồng |
 |---|---|---|---|---|---|
-| `sunflower` | Hoa mặt trời | 50 | 300 | Sinh 25 sun mỗi 24s | 7.5s |
+| `sunflower` | Hoa mặt trời | 50 | 300 | Sinh 25 sun mỗi 15s | 7.5s |
 | `peashooter` | Cây bắn đậu | 100 | 300 | Bắn 1 đạn (20 dmg) mỗi 1.4s khi có zombie cùng hàng | 7.5s |
 | `wallnut` | Quả óc chó | 50 | 4000 | Không hành động — tường chắn | 30s |
 | `icepea` | Đậu băng | 175 | 300 | Đạn 20 dmg + làm chậm zombie 50% trong 3s | 7.5s |

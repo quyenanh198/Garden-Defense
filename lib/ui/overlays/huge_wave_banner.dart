@@ -27,7 +27,7 @@ class _HugeWaveBannerState extends State<HugeWaveBanner> {
 
   @override
   Widget build(BuildContext context) {
-    final reduce = MediaQuery.of(context).disableAnimations;
+    final reduce = MediaQuery.disableAnimationsOf(context);
     return IgnorePointer(
       child: Align(
         alignment: const Alignment(0, -0.2),

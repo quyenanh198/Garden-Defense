@@ -63,7 +63,9 @@ class GameState {
   final Map<String, double> _cooldowns = {};
   final List<GameEvent> _events = [];
   int _nextId = 1;
-  double _skySunTimer = 0;
+  // Khởi động lệch để sun trời đầu tiên rơi ở skySunFirstDrop thay vì
+  // phải chờ trọn một chu kỳ skySunInterval.
+  double _skySunTimer = Balance.skySunInterval - Balance.skySunFirstDrop;
 
   double cooldownRemaining(String plantId) => _cooldowns[plantId] ?? 0;
   bool get allWavesSpawned => _spawner.allSpawned;

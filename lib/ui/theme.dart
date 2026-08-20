@@ -31,7 +31,6 @@ class GdShape {
   static const radiusLg = 24.0;
   static const border = 3.0;
   static const borderLg = 4.0;
-  static const minTouch = 44.0;
   static const clayShadow = [
     BoxShadow(color: Color(0x33000000), offset: Offset(0, 6), blurRadius: 0),
     BoxShadow(color: Color(0x1A000000), offset: Offset(0, 10), blurRadius: 16),

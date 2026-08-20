@@ -29,7 +29,7 @@ class PlantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final reduceMotion = MediaQuery.of(context).disableAnimations;
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
     final ready = affordable && cooldownFraction <= 0;
     return Semantics(
       button: true,

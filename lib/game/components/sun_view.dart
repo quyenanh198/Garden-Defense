@@ -31,13 +31,13 @@ class SunView extends PositionComponent with TapCallbacks {
     ..strokeWidth = 4;
 
   void syncFromState() {
-    final t = (sun.age / 1.0).clamp(0.0, 1.0);
+    final t = (sun.age / Balance.sunFallDuration).clamp(0.0, 1.0);
     position = Vector2(
       _target.x,
       lerpDouble(GridBoard.originY - 40, _target.y, t)!,
     );
     final left = Balance.sunLifetime - sun.age;
-    if (left < 2) {
+    if (left < Balance.sunBlinkThreshold) {
       final blink = (sin(left * 12) + 1) / 2;
       _fill.color = const Color(
         0xFFFBBF24,

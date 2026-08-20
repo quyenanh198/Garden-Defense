@@ -37,9 +37,14 @@ class Balance {
 
   static const int skySunValue = 25;
   static const double skySunInterval = 10;
+  static const double skySunFirstDrop = 5; // sun trời đầu tiên rơi sớm
   static const double sunLifetime = 8;
   static const int sunflowerValue = 25;
-  static const double sunflowerInterval = 24;
+  static const double sunflowerInterval = 15;
+
+  // Hằng hiển thị sun (view đọc, không ảnh hưởng luật chơi).
+  static const double sunFallDuration = 1; // giây rơi từ trời xuống ô
+  static const double sunBlinkThreshold = 2; // còn <2s thì nhấp nháy
 
   static const double peaDamage = 20;
   static const double peaSpeed = 6; // ô / giây

@@ -32,9 +32,9 @@ void main() {
     expect(g.tapCell(0, 1), PlantResult.ok);
     expect(g.sun, 0);
   });
-  test('sky sun spawns every 10s and expires after 8s', () {
+  test('sky sun spawns from 5s and expires after 8s', () {
     final g = newGame(lvl: level(skySuns: true, waves: _far));
-    run(g, 10.05);
+    run(g, 5.05);
     expect(g.suns.length, 1);
     run(g, 7.9);
     expect(g.suns.length, 1);
@@ -46,18 +46,18 @@ void main() {
     final g = newGame(
       lvl: level(startingSun: 0, skySuns: true, waves: _far),
     );
-    run(g, 10.05);
+    run(g, 5.05);
     final id = g.suns.single.id;
     expect(g.collectSun(id), isTrue);
     expect(g.sun, 25);
     expect(g.suns, isEmpty);
     expect(g.collectSun(id), isFalse);
   });
-  test('sunflower produces 25 sun every 24s', () {
+  test('sunflower produces 25 sun every 15s', () {
     final g = newGame(lvl: level(startingSun: 50, waves: _far));
     g.selectPlant('sunflower');
     g.tapCell(1, 1);
-    run(g, 23.9);
+    run(g, 14.9);
     expect(g.suns, isEmpty);
     run(g, 0.2);
     expect(g.suns.single.value, 25);
